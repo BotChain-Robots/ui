@@ -36,4 +36,21 @@ public class BuildScript
 
         File.Copy(sourceSoPath, destSoPath, overwrite: true);
     }
+    
+    public static void BuildMac()
+    {
+        string outputPath = "Builds/macOS/botchain.app";
+
+        BuildPipeline.BuildPlayer(
+            new[] { "Assets/Scenes/SampleScene.unity" },
+            outputPath,
+            BuildTarget.StandaloneOSX,
+            BuildOptions.None
+        );
+
+        string sourceSoPath = "Assets/ControlLibrary/libc_control.dylib";
+        string destSoPath = Path.Combine(Path.GetDirectoryName(outputPath), "libc_control.dylib");
+
+        File.Copy(sourceSoPath, destSoPath, overwrite: true);
+    }
 }
