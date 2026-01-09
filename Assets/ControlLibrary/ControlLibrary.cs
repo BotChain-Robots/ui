@@ -7,17 +7,33 @@ using Google.FlatBuffers;
 
 public class ControlLibrary : MonoBehaviour
 {
-    [DllImport("libcontrol")]
+    [DllImport("libc_control")]
     public static extern void init();
 
-    [DllImport("libcontrol")]
+    [DllImport("libc_control")]
     public static extern void cleanup();
 
-    [DllImport("libcontrol")]
+    [DllImport("libc_control")]
     public static extern int send_angle_control(int module_id, int angle);
 
-    [DllImport("libcontrol")]
+    [DllImport("libc_control")]
     private static extern IntPtr get_configuration(out int module_id); // the data this points to will be invalidated when called again
+
+    [DllImport("libc_control")]
+    public static extern bool control_sentry_init(
+        string dsn,
+        string environment,
+        string release
+    );
+
+    [DllImport("libc_control")]
+    public static extern void control_sentry_set_app_info(
+        string app_name,
+        string app_version,
+        string build_number);
+
+    [DllImport("libc_control")]
+    public static extern void control_sentry_shutdown();
 
 
     public static Frontend.RobotConfiguration getRobotConfiguration() // this is not thread safe

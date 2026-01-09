@@ -6,7 +6,13 @@ public class DiscoveryButton : MonoBehaviour
 
     void Start()
     {
-        ControlLibrary.init(); // todo: where should this be? needs to be somewhere on startup of the game.
+        // todo: where should this be? needs to be somewhere on startup of the game.
+
+        // Sentry is used for crash logging
+        ControlLibrary.control_sentry_init("https://945ddf43f243019f176a8b6171cf534a@o4505559031545856.ingest.us.sentry.io/4510490606567424", "env", "rel");
+        ControlLibrary.control_sentry_set_app_info("unity", "1", "1");
+
+        ControlLibrary.init();
     }
 
     public void OnDiscoveryPressed()
@@ -26,5 +32,6 @@ public class DiscoveryButton : MonoBehaviour
     {
         Debug.Log("Cleaning up native resources");
         ControlLibrary.cleanup();
+        ControlLibrary.control_sentry_shutdown();
     }
 }
