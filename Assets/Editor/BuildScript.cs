@@ -13,8 +13,6 @@ public class BuildScript
             BuildTarget.StandaloneWindows64,
             BuildOptions.None
         );
-
-        File.Copy(sourceSoPath, destSoPath, overwrite: true);
     }
 
     public static void BuildLinux()
