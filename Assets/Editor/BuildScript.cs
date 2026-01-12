@@ -14,9 +14,6 @@ public class BuildScript
             BuildOptions.None
         );
 
-        string sourceSoPath = "Assets/ControlLibrary/libc_control.dll";
-        string destSoPath = Path.Combine(Path.GetDirectoryName(outputPath), "libc_control.dll");
-
         File.Copy(sourceSoPath, destSoPath, overwrite: true);
     }
 
