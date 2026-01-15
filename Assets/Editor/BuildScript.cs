@@ -25,13 +25,8 @@ public class BuildScript
             BuildTarget.StandaloneLinux64,
             BuildOptions.None
         );
-
-        string sourceSoPath = "Assets/ControlLibrary/libc_control.so";
-        string destSoPath = Path.Combine(Path.GetDirectoryName(outputPath), "libc_control.so");
-
-        File.Copy(sourceSoPath, destSoPath, overwrite: true);
     }
-    
+
     public static void BuildMac()
     {
         string outputPath = "Builds/macOS/botchain.app";
@@ -42,10 +37,5 @@ public class BuildScript
             BuildTarget.StandaloneOSX,
             BuildOptions.None
         );
-
-        string sourceSoPath = "Assets/ControlLibrary/libc_control.dylib";
-        string destSoPath = Path.Combine(Path.GetDirectoryName(outputPath), "libc_control.dylib");
-
-        File.Copy(sourceSoPath, destSoPath, overwrite: true);
     }
 }
