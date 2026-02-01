@@ -9,5 +9,17 @@ public enum ModuleType : sbyte
   DC_MOTOR = 2,
   BATTERY = 3,
   SERVO_2 = 4,
+  DISPLAY = 5,
+  GRIPPER = 6,
+  SPEAKER = 7,
+  IMU = 8,
+  DISTANCE_SENSOR = 9,
+  SPLITTER_2 = 10,
+  SPLITTER_3 = 11,
+  SPLITTER_4 = 12,
+  SPLITTER_5 = 13,
+  SPLITTER_6 = 14,
+  SPLITTER_7 = 15,
+  SPLITTER_8 = 16,
 };
 
