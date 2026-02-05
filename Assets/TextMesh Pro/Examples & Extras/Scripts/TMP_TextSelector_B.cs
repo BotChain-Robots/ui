@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System.Collections;
@@ -490,15 +490,20 @@ namespace TMPro.Examples
             dst_colors[vertexIndex + 3] = src_colors[vertexIndex + 3];
 
             // Restore UV0S
-            // UVS0
+            // UVS0 (Vector4[] in Unity 2022.3+ TMP, Vector2[] in older)
+#if UNITY_2022_3_OR_NEWER
+            Vector4[] src_uv0s = m_cachedMeshInfoVertexData[materialIndex].uvs0;
+            Vector4[] dst_uv0s = m_TextMeshPro.textInfo.meshInfo[materialIndex].uvs0;
+#else
             Vector2[] src_uv0s = m_cachedMeshInfoVertexData[materialIndex].uvs0;
             Vector2[] dst_uv0s = m_TextMeshPro.textInfo.meshInfo[materialIndex].uvs0;
+#endif
             dst_uv0s[vertexIndex + 0] = src_uv0s[vertexIndex + 0];
             dst_uv0s[vertexIndex + 1] = src_uv0s[vertexIndex + 1];
             dst_uv0s[vertexIndex + 2] = src_uv0s[vertexIndex + 2];
             dst_uv0s[vertexIndex + 3] = src_uv0s[vertexIndex + 3];
 
-            // UVS2
+            // UVS2 (remains Vector2[] in current TMP versions)
             Vector2[] src_uv2s = m_cachedMeshInfoVertexData[materialIndex].uvs2;
             Vector2[] dst_uv2s = m_TextMeshPro.textInfo.meshInfo[materialIndex].uvs2;
             dst_uv2s[vertexIndex + 0] = src_uv2s[vertexIndex + 0];
