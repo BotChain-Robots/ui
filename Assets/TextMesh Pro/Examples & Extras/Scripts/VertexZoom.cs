@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -150,9 +150,13 @@ namespace TMPro.Examples
                     destinationVertices[vertexIndex + 3] += offset;
 
                     // Restore Source UVS which have been modified by the sorting
+#if UNITY_2022_3_OR_NEWER
+                    Vector4[] sourceUVs0 = cachedMeshInfoVertexData[materialIndex].uvs0;
+                    Vector4[] destinationUVs0 = textInfo.meshInfo[materialIndex].uvs0;
+#else
                     Vector2[] sourceUVs0 = cachedMeshInfoVertexData[materialIndex].uvs0;
                     Vector2[] destinationUVs0 = textInfo.meshInfo[materialIndex].uvs0;
-
+#endif
                     destinationUVs0[vertexIndex + 0] = sourceUVs0[vertexIndex + 0];
                     destinationUVs0[vertexIndex + 1] = sourceUVs0[vertexIndex + 1];
                     destinationUVs0[vertexIndex + 2] = sourceUVs0[vertexIndex + 2];
@@ -178,7 +182,15 @@ namespace TMPro.Examples
 
                     // Updated modified vertex attributes
                     textInfo.meshInfo[i].mesh.vertices = textInfo.meshInfo[i].vertices;
-                    textInfo.meshInfo[i].mesh.uv = textInfo.meshInfo[i].uvs0;
+#if UNITY_2022_3_OR_NEWER
+                    textInfo.meshInfo[i].mesh.SetUVs(0, textInfo.meshInfo[i].uvs0);
+#else
+                    Vector2[] uvs0 = textInfo.meshInfo[i].uvs0;
+                    Vector2[] uv2 = new Vector2[uvs0.Length];
+                    for (int j = 0; j < uvs0.Length; j++)
+                        uv2[j] = uvs0[j];
+                    textInfo.meshInfo[i].mesh.uv = uv2;
+#endif
                     textInfo.meshInfo[i].mesh.colors32 = textInfo.meshInfo[i].colors32;
 
                     m_TextComponent.UpdateGeometry(textInfo.meshInfo[i].mesh, i);
