@@ -4055,10 +4055,13 @@ MonoBehaviour:
   panSpeed: 3.5
   zoomSpeed: 10
   moveSmoothTime: 0.12
-  orbitSpeed: 150
+  orbitSpeed: 20
   minPitch: -80
   maxPitch: 80
   orbitSmoothTime: 0.08
+  lockCursorWhileOrbiting: 1
+  maxMouseDelta: 40
+  orbitSmoothing: 0.08
   lookAtDuration: 0.25
   homeDuration: 0.35
 --- !u!114 &963194231

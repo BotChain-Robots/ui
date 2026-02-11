@@ -18,10 +18,18 @@ public class UserCameraControl : MonoBehaviour
     public float moveSmoothTime = 0.12f; // higher = snappier, lower = floatier
 
     [Header("Orbit")]
-    public float orbitSpeed = 180f;      // degrees/sec per pixel-ish delta
+    public float orbitSpeed = 20f;      // degrees/sec per pixel-ish delta
     public float minPitch = -20f;
     public float maxPitch = 80f;
     public float orbitSmoothTime = 0.08f;
+
+    [Header("Orbit Feel")]
+    public bool lockCursorWhileOrbiting = true;
+    public float maxMouseDelta = 40f;          // clamps rare huge spikes
+    public float orbitSmoothing = 0.08f;       // 0 = no smoothing, ~0.05-0.15 feels nice
+
+    Vector2 orbitDeltaSmoothed;
+    Vector2 orbitDeltaVel;
 
     [Header("Look / Home Smooth")]
     public float lookAtDuration = 0.25f;
@@ -84,35 +92,52 @@ public class UserCameraControl : MonoBehaviour
             orbiting = true;
             SetCursor(eyeCursor);
 
-            // stop any scripted rotation so user has control
-            StopLookRoutine();
-
             SyncAnglesFromTransform();
-            lastMouse = (Vector2)Input.mousePosition;
 
-            yawDeltaSmoothed = pitchDeltaSmoothed = 0f;
-            yawDeltaVel = pitchDeltaVel = 0f;
+            if (lockCursorWhileOrbiting)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+
+            orbitDeltaSmoothed = Vector2.zero;
+            orbitDeltaVel = Vector2.zero;
         }
 
         if (Input.GetMouseButtonUp(1))
+        {
             orbiting = false;
+
+            if (lockCursorWhileOrbiting)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+
+            orbitDeltaSmoothed = Vector2.zero;
+            orbitDeltaVel = Vector2.zero;
+            return;
+        }
 
         if (!orbiting) return;
 
-        float dt = Time.unscaledDeltaTime;
+        // Use Input axes while locked (stable, no screen-edge issues)
+        float dx = Input.GetAxisRaw("Mouse X");
+        float dy = Input.GetAxisRaw("Mouse Y");
 
-        Vector2 mouse = (Vector2)Input.mousePosition;
-        Vector2 delta = mouse - lastMouse;
-        lastMouse = mouse;
+        // Clamp rare spikes (frame hitch / window focus changes)
+        dx = Mathf.Clamp(dx, -maxMouseDelta, maxMouseDelta);
+        dy = Mathf.Clamp(dy, -maxMouseDelta, maxMouseDelta);
 
-        float targetYawDelta = delta.x * orbitSpeed * dt;
-        float targetPitchDelta = -delta.y * orbitSpeed * dt;
+        Vector2 targetDelta = new Vector2(dx, dy);
 
-        yawDeltaSmoothed = Mathf.SmoothDamp(yawDeltaSmoothed, targetYawDelta, ref yawDeltaVel, orbitSmoothTime);
-        pitchDeltaSmoothed = Mathf.SmoothDamp(pitchDeltaSmoothed, targetPitchDelta, ref pitchDeltaVel, orbitSmoothTime);
+        if (orbitSmoothing > 0f)
+            orbitDeltaSmoothed = Vector2.SmoothDamp(orbitDeltaSmoothed, targetDelta, ref orbitDeltaVel, orbitSmoothing);
+        else
+            orbitDeltaSmoothed = targetDelta;
 
-        yaw += yawDeltaSmoothed;
-        pitch += pitchDeltaSmoothed;
+        yaw += orbitDeltaSmoothed.x * orbitSpeed;
+        pitch -= orbitDeltaSmoothed.y * orbitSpeed;
         pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
         transform.rotation = Quaternion.Euler(pitch, yaw, 0f);

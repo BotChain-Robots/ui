@@ -11,14 +11,6 @@ public class ModuleSelector : MonoBehaviour
 
     void Update()
     {
-        // If user is moving the camera, deselect current module
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) ||
-            Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
-        {
-            ClearSelection();
-            return;
-        }
-
         if (Input.GetMouseButtonDown(0))
         {
             // Ignore clicks over UI
