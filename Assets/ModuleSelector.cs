@@ -1,49 +1,62 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ModuleSelector : MonoBehaviour
 {
     public Camera mainCamera;
-    public Cinemachine.CinemachineVirtualCamera virtualCamera;
-    private ModuleBase prevModule; //Store previous module then when unselected call that module's unselect function to make panel disappear or something
+    public UserCameraControl cameraController; 
 
-    // Update is called once per frame
+    [System.NonSerialized]
+    public ModuleBase prevModule;
+
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            // Don't process any clicks if the click is over UI element
-            if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+            // Ignore clicks over UI
+            if (EventSystem.current != null &&
+                EventSystem.current.IsPointerOverGameObject())
                 return;
 
-            if (prevModule != null)
-            {
-                prevModule.DeSelect();
-                virtualCamera.LookAt = null;
-                virtualCamera.Follow = null;
-            }
+            ClearSelection();
+
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 ModuleBase module = hit.collider.GetComponentInParent<ModuleBase>();
-                if (module != null && module != prevModule)
+                if (module != null)
                 {
                     module.OnSelect();
                     prevModule = module;
-                    virtualCamera.LookAt = module.transform;
-                    virtualCamera.Follow = module.transform;
-                }
-                else
-                {
-                    prevModule = null;
+
+                    // Servo highlighting support
+                    ServoMotorModule servo = module.GetComponent<ServoMotorModule>();
+                    ServoMotorModule.selectedModule = servo;
+
+                    // tell camera to look at module
+                    if (cameraController != null)
+                        cameraController.LookAtTarget(module.transform);
                 }
             }
             else
             {
-                prevModule = null;
+                ClearSelection();
             }
         }
+    }
+
+    // Deselect current module and clear selection state
+    void ClearSelection()
+    {
+        if (prevModule != null)
+        {
+            prevModule.DeSelect();
+            prevModule = null;
+        }
+
+        ServoMotorModule.selectedModule = null;
+
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
     }
 }
