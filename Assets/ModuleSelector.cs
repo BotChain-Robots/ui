@@ -5,9 +5,30 @@ public class ModuleSelector : MonoBehaviour
 {
     public Camera mainCamera;
     public UserCameraControl cameraController; 
+    
+    [Header("Selection Camera Focus")]
+    [Tooltip("If enabled, selecting a module will rotate the camera to look at it.")]
+    public bool focusCameraOnSelection = true;
+
+    [Tooltip("When this view is active, camera focus-on-selection is suppressed (used for IK view). If not set, will auto-resolve Views/InverseKinematicsView.")]
+    public GameObject inverseKinematicsViewRoot;
 
     [System.NonSerialized]
     public ModuleBase prevModule;
+
+    void Awake()
+    {
+        // Auto-resolve the IK view root if not wired in the inspector.
+        if (inverseKinematicsViewRoot == null)
+        {
+            Transform views = GameObject.Find("Views")?.transform;
+            inverseKinematicsViewRoot =
+                views != null ? views.Find("InverseKinematicsView")?.gameObject : null;
+
+            if (inverseKinematicsViewRoot == null)
+                inverseKinematicsViewRoot = GameObject.Find("InverseKinematicsView");
+        }
+    }
 
     void Update()
     {
@@ -34,7 +55,8 @@ public class ModuleSelector : MonoBehaviour
                     ServoMotorModule.selectedModule = servo;
 
                     // tell camera to look at module
-                    if (cameraController != null)
+                    bool ikViewActive = inverseKinematicsViewRoot != null && inverseKinematicsViewRoot.activeInHierarchy;
+                    if (focusCameraOnSelection && !ikViewActive && cameraController != null)
                         cameraController.LookAtTarget(module.transform);
                 }
             }
