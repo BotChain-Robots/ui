@@ -25,10 +25,10 @@ public abstract class ServoMotorModule : ModuleBase
 
     public abstract void InitialSetAngle(float angle);
 
-    public void SetAngleAndSendControlLibrary(float angle)
+    public void SetAngleAndSendControlLibrary(float angle, float minChangeDegrees = 0.1f)
     {
         SetAngle(angle);
-        if (Mathf.Abs(currentAngle - lastSentAngle) > 0.1f)
+        if (Mathf.Abs(currentAngle - lastSentAngle) > minChangeDegrees)
         {
             SendToControlLibrary(servoType, currentAngle);
             lastSentAngle = currentAngle;

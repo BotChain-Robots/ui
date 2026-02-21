@@ -3,6 +3,8 @@ using UnityEngine;
 public class DiscoveryButton : MonoBehaviour
 {
     public TopologyBuilder topologyBuilder;
+    [Tooltip("If set, camera focuses on GeneratedTopology after Discover. If null, will FindObjectOfType.")]
+    public UserCameraControl cameraController;
 
     void Start()
     {
@@ -21,11 +23,19 @@ public class DiscoveryButton : MonoBehaviour
         {
             Debug.Log("Discovery button pressed.");
             topologyBuilder.BuildTopologyFromJson();
+            FocusCameraOnTopology();
         }
         else
         {
             Debug.LogError("TopologyBuilder is not assigned!");
         }
+    }
+
+    void FocusCameraOnTopology()
+    {
+        UserCameraControl cam = cameraController != null ? cameraController : FindObjectOfType<UserCameraControl>();
+        if (cam != null)
+            cam.FindModuleStructure();
     }
 
     void OnDestroy()

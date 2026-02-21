@@ -4,59 +4,122 @@ using System;
 using System.Linq;
 using Frontend;
 
-
+[System.Serializable]
+public class JsonTopologyGraph { public List<JsonModuleData> Modules; public List<JsonConnection> Connections; }
+[System.Serializable]
+public class JsonModuleData { public string Id; public string Type; public float Degree; }
+[System.Serializable]
+public class JsonConnection { public string FromModuleId; public string ToModuleId; public string FromSocket; public string ToSocket; public int Orientation; }
 
 public class TopologyBuilder : MonoBehaviour
 {
     public ModuleSpawner spawner;
 
+    [Header("Topology Selection")]
+    [Tooltip("Set to true to load from JSON file (for local testing). Set to false to use ControlLibrary.")]
+    public bool useJsonFile = false;
+    [Tooltip("When true, angle commands are not sent to native ControlLibrary - use only for local testing without hardware.")]
+    public bool skipControlLibraryCalls = false;
+    [Tooltip("JSON file name (without .json) in Resources folder. e.g. 'mockData' or 'mockDataSimple'")]
+    public string jsonFileName = "mockData";
+
     public static Dictionary<string, GameObject> idToInstance = new();
+    public static bool _skipControlLibraryCalls = false;
+
+    public static bool SkipControlLibraryCalls => _skipControlLibraryCalls;
 
     public void BuildTopologyFromJson()
     {
-
-        // todo: this is some really bad temporary code
         TopologyGraph graph = new TopologyGraph();
-        RobotConfiguration config = ControlLibrary.getRobotConfiguration();
-
         Dictionary<int, ModuleType> idToType = new();
-        int moduleCount = config.ModulesLength;
-        for (int i = 0; i < moduleCount; i++)
+
+        if (useJsonFile)
         {
-            var n_module = config.Modules(i);
-            if (n_module != null)
+            TextAsset jsonAsset = Resources.Load<TextAsset>(jsonFileName);
+            if (jsonAsset == null) { Debug.LogError($"JSON not found: Resources/{jsonFileName}.json"); return; }
+            JsonTopologyGraph jsonGraph = JsonUtility.FromJson<JsonTopologyGraph>(jsonAsset.text);
+            if (jsonGraph?.Modules == null || jsonGraph.Modules.Count == 0) { Debug.LogError("JSON has no modules"); return; }
+
+            Dictionary<string, int> stringToIntId = new Dictionary<string, int>();
+            int nextIntId = 1;
+            foreach (var m in jsonGraph.Modules)
             {
-                var module = n_module.Value;
-                Debug.Log("Adding module " + module.Id);
-                graph.Modules.Add(new ModuleData
-                {
-                    Id = module.Id,
-                    Type = module.ModuleType.ToString(),
-                    Degree = module.ConfigurationAsMotorState().Angle
-                });
-                idToType.Add(module.Id, module.ModuleType);
+                if (!stringToIntId.ContainsKey(m.Id)) stringToIntId[m.Id] = nextIntId++;
+                int intId = stringToIntId[m.Id];
+                ModuleType mt = ParseModuleType(m.Type);
+                idToType[intId] = mt;
+                graph.Modules.Add(new ModuleData { Id = intId, Type = mt.ToString(), Degree = m.Degree });
             }
+            if (jsonGraph.Connections != null)
+                foreach (var c in jsonGraph.Connections)
+                {
+                    if (!stringToIntId.TryGetValue(c.FromModuleId, out int fromId) || !stringToIntId.TryGetValue(c.ToModuleId, out int toId)) continue;
+                    Orientation o = c.Orientation == 90 ? Orientation.Deg90 : c.Orientation == 180 ? Orientation.Deg180 : c.Orientation == 270 ? Orientation.Deg270 : Orientation.Deg0;
+                    graph.Connections.Add(new Connection { FromModuleId = fromId, ToModuleId = toId, FromSocket = c.FromSocket ?? "MaleSocket", ToSocket = c.ToSocket ?? "FemaleSocket", Orientation = o });
+                }
+            Debug.Log($"[TopologyBuilder] Built from JSON: {jsonFileName}");
+            _skipControlLibraryCalls = skipControlLibraryCalls;
+        }
+        else
+        {
+            RobotConfiguration config = ControlLibrary.getRobotConfiguration();
+            int moduleCount = config.ModulesLength;
+            for (int i = 0; i < moduleCount; i++)
+            {
+                var n_module = config.Modules(i);
+                if (n_module != null)
+                {
+                    var module = n_module.Value;
+                    Debug.Log("Adding module " + module.Id);
+                    graph.Modules.Add(new ModuleData
+                    {
+                        Id = module.Id,
+                        Type = module.ModuleType.ToString(),
+                        Degree = module.ConfigurationAsMotorState().Angle
+                    });
+                    idToType.Add(module.Id, module.ModuleType);
+                }
+            }
+            int connectionCount = config.ConnectionsLength;
+            for (int i = 0; i < connectionCount; i++)
+            {
+                var n_connection = config.Connections(i);
+                if (n_connection != null)
+                {
+                    var connection = n_connection.Value;
+                    Debug.Log("orientation: " + connection.Orientation);
+                    graph.Connections.Add(new Connection
+                    {
+                        FromModuleId = connection.FromModuleId,
+                        FromSocket = idToType[connection.FromModuleId] == ModuleType.SPLITTER ? "MaleSocket" + (connection.FromSocket == 0 ? "" : connection.FromSocket) : "MaleSocket",
+                        ToModuleId = connection.ToModuleId,
+                        ToSocket = "FemaleSocket",
+                        Orientation = connection.Orientation
+                    });
+                }
+            }
+            _skipControlLibraryCalls = false;
         }
 
-        int connectionCount = config.ConnectionsLength;
-        for (int i = 0; i < connectionCount; i++)
-        {
-            var n_connection = config.Connections(i);
-            if (n_connection != null)
-            {
-                var connection = n_connection.Value;
-                Debug.Log("orientation: " + connection.Orientation);
-                graph.Connections.Add(new Connection
-                {
-                    FromModuleId = connection.FromModuleId,
-                    FromSocket = idToType[connection.FromModuleId] == ModuleType.SPLITTER ? "MaleSocket" + (connection.FromSocket == 0 ? "" : connection.FromSocket) : "MaleSocket",
-                    ToModuleId = connection.ToModuleId,
-                    ToSocket = "FemaleSocket",
-                    Orientation = connection.Orientation
-                });
-            }
-        }
+        BuildTopologyFromGraph(graph);
+    }
 
+    private static ModuleType ParseModuleType(string typeString)
+    {
+        if (string.IsNullOrEmpty(typeString)) return ModuleType.SPLITTER;
+        switch (typeString)
+        {
+            case "Servo1": return ModuleType.SERVO_1;
+            case "Servo2": return ModuleType.SERVO_2;
+            case "DC": return ModuleType.DC_MOTOR;
+            case "Hub": return ModuleType.SPLITTER;
+            case "Battery": return ModuleType.BATTERY;
+            default: return ModuleType.SPLITTER;
+        }
+    }
+
+    private void BuildTopologyFromGraph(TopologyGraph graph)
+    {
         // Destroy previous topology root if it exists
         GameObject oldRoot = GameObject.Find("GeneratedTopology");
         if (oldRoot != null)
@@ -101,10 +164,11 @@ public class TopologyBuilder : MonoBehaviour
             if (baseScript != null)
             {
                 baseScript.moduleID = module.Id.ToString();
-                if (module.Type.Contains("Servo") && module.Degree != null)
+                ModuleType parsedType = Enum.Parse<ModuleType>(module.Type);
+                if ((parsedType == ModuleType.SERVO_1 || parsedType == ModuleType.SERVO_2))
                 {
                     ServoMotorModule servo;
-                    if (module.Type == "Servo1")
+                    if (parsedType == ModuleType.SERVO_1)
                     {
                         servo = instance.GetComponent<ServoBendModule>();
                     }
@@ -112,8 +176,6 @@ public class TopologyBuilder : MonoBehaviour
                     {
                         servo = instance.GetComponent<ServoStraightModule>();
                     }
-                    //ServoBendModule servo = instance.GetComponent<ServoBendModule>();
-                    // servo.SetInitialAngle(module.Degree);
                     servo.InitialSetAngle(module.Degree);
                 }
             }
