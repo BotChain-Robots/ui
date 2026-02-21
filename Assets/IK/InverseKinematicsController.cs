@@ -198,7 +198,7 @@ public class InverseKinematicsController : MonoBehaviour
                 }
 
                 joint.currentAngle = desiredAngle;
-                joint.servo.SetAngle(desiredAngle);
+                joint.servo.SetAngleAndSendControlLibrary(desiredAngle, 1f);
                 
                 endEffectorPos = endEffector.position;
                 

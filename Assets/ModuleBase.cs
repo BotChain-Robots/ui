@@ -37,6 +37,10 @@ public abstract class ModuleBase : MonoBehaviour
             });
         }
         Debug.Log($"[ControlLibrary] Sending command: {json}");
+        if (TopologyBuilder.SkipControlLibraryCalls)
+        {
+            return;
+        }
         if (0 != ControlLibrary.send_angle_control(Int32.Parse(moduleID), (int)currentAngle))
         {
             Debug.Log("Control library exited with error");
