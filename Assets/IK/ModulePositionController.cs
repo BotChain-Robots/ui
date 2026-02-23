@@ -22,6 +22,11 @@ public class ModulePositionController : MonoBehaviour
     public bool makeSelectedModuleTransparent = true;
     [Range(0.05f, 1f)]
     public float selectedModuleAlpha = 0.25f;
+
+    [Header("Fixed/Anchor Module (IK View)")]
+    [Tooltip("If enabled, the fixed (anchor) module is tinted red in IK view.")]
+    public bool makeFixedModuleRed = true;
+    public Color fixedModuleRedColor = Color.red;
     
     [Header("UI References")]
     public Button xPlusButton;
@@ -44,6 +49,9 @@ public class ModulePositionController : MonoBehaviour
     // Critical: modules are parented; apply transparency only to renderers owned by the selected module.
     private readonly Dictionary<Renderer, Material[]> _originalSharedMaterialsByRenderer = new();
     private readonly List<Renderer> _transparentRenderers = new();
+
+    private readonly Dictionary<Renderer, Material[]> _originalAnchorMaterialsByRenderer = new();
+    private readonly List<Renderer> _anchorRenderers = new();
     
     void Start()
     {
@@ -412,11 +420,16 @@ public class ModulePositionController : MonoBehaviour
         {
             ApplyTransparencyToSelectedModule();
         }
+        if (makeFixedModuleRed)
+        {
+            ApplyRedToAnchorModule();
+        }
     }
     
     public void DeselectModule()
     {
         RestoreTransparency();
+        RestoreAnchorColor();
 
         if (selectedModule != null)
         {
@@ -436,6 +449,7 @@ public class ModulePositionController : MonoBehaviour
     private void ApplyTransparencyToSelectedModule()
     {
         RestoreTransparency();
+        RestoreAnchorColor();
 
         if (selectedModule == null) return;
 
@@ -562,6 +576,53 @@ public class ModulePositionController : MonoBehaviour
 
         _transparentRenderers.Clear();
         _originalSharedMaterialsByRenderer.Clear();
+    }
+
+    private void ApplyRedToAnchorModule()
+    {
+        RestoreAnchorColor();
+        if (ikController == null || selectedModule == null || !makeFixedModuleRed) return;
+
+        Transform anchor = ikController.GetAnchorPoint();
+        if (anchor == null || anchor == selectedModule.transform) return;
+
+        var anchorModule = anchor.GetComponent<ModuleBase>();
+        if (anchorModule == null) return;
+
+        foreach (var r in GetRenderersOwnedByModule(anchorModule))
+        {
+            if (!_originalAnchorMaterialsByRenderer.ContainsKey(r))
+                _originalAnchorMaterialsByRenderer[r] = r.sharedMaterials;
+
+            Material[] mats = r.materials;
+            for (int i = 0; i < mats.Length; i++)
+            {
+                if (mats[i] == null) continue;
+                ConfigureMaterialForRed(mats[i], fixedModuleRedColor);
+            }
+            _anchorRenderers.Add(r);
+        }
+    }
+
+    private static void ConfigureMaterialForRed(Material m, Color redColor)
+    {
+        if (m.HasProperty("_BaseColor"))
+            m.SetColor("_BaseColor", redColor);
+        if (m.HasProperty("_Color"))
+            m.SetColor("_Color", redColor);
+    }
+
+    private void RestoreAnchorColor()
+    {
+        if (_anchorRenderers.Count == 0 && _originalAnchorMaterialsByRenderer.Count == 0) return;
+        foreach (var r in _anchorRenderers)
+        {
+            if (r == null) continue;
+            if (_originalAnchorMaterialsByRenderer.TryGetValue(r, out var shared))
+                r.sharedMaterials = shared;
+        }
+        _anchorRenderers.Clear();
+        _originalAnchorMaterialsByRenderer.Clear();
     }
     
     bool IsPartOfGeneratedTopology(Transform moduleTransform)
