@@ -16,8 +16,12 @@ public class ModuleSelector : MonoBehaviour
     [System.NonSerialized]
     public ModuleBase prevModule;
 
+    private static ModuleSelector _instance;
+    public static ModuleBase SelectedModule => _instance != null ? _instance.prevModule : null;
+
     void Awake()
     {
+        _instance = this;
         // Auto-resolve the IK view root if not wired in the inspector.
         if (inverseKinematicsViewRoot == null)
         {
@@ -80,5 +84,10 @@ public class ModuleSelector : MonoBehaviour
 
         if (EventSystem.current != null)
             EventSystem.current.SetSelectedGameObject(null);
+    }
+
+    void OnDestroy()
+    {
+        if (_instance == this) _instance = null;
     }
 }
