@@ -11,7 +11,6 @@ public class DCMotorModule : ModuleBase
 
     public float rotationSpeed = 90f;
     private float targetPosition = 0f;
-    private Coroutine followCoroutine;
 
     public void Start()
     {
@@ -23,34 +22,14 @@ public class DCMotorModule : ModuleBase
 
     public override void OnSelect()
     {
-        if (followCoroutine != null)
-            StopCoroutine(followCoroutine);
-
-        followCoroutine = StartCoroutine(FollowPositionForFrames());
-        motorControlPanel.Initialize(this);
-    }
-
-    private IEnumerator FollowPositionForFrames()
-    {
-        RectTransform panelRect = motorControlPanel.GetComponent<RectTransform>();
-
-        float duration = 0.5f;
-        float timer = 0f;
-
-        while (timer < duration)
-        {
-            Vector3 worldPos = transform.position;
-            Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos) + new Vector3(150f, 0f, 0f);
-            panelRect.position = screenPos;
-
-            timer += Time.deltaTime;
-            yield return null;
-        }
+        if (motorControlPanel != null)
+            motorControlPanel.Initialize(this);
     }
 
     public override void DeSelect()
     {
-        motorControlPanel.HidePanel();
+        if (motorControlPanel != null)
+            motorControlPanel.HidePanel();
     }
 
     public void Rotate(float degrees, int direction)
