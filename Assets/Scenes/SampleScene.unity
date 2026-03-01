@@ -944,9 +944,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawner: {fileID: 2021810911}
-  useJsonFile: 0
+  useJsonFile: 1
   skipControlLibraryCalls: 0
-  jsonFileName: mockData
+  jsonFileName: mockDataSimple
 --- !u!4 &387671720
 Transform:
   m_ObjectHideFlags: 0
@@ -1744,11 +1744,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   motorShaft: {fileID: 735258638}
   rotationSpeed: 90
---- !u!4 &551393443 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-  m_PrefabInstance: {fileID: 1309657867}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &551864338
 GameObject:
   m_ObjectHideFlags: 0
@@ -4231,7 +4226,7 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4077927847297772526, guid: 46058ab5ebab64d548b4008f54df1f6d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 551393443}
+      addedObject: {fileID: 0}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 46058ab5ebab64d548b4008f54df1f6d, type: 3}
 --- !u!1 &943453643
@@ -4390,13 +4385,9 @@ MonoBehaviour:
   servoControlSection: {fileID: 1557863854}
   servoAngleSlider: {fileID: 1557863856}
   servoAngleLabel: {fileID: 1382778227}
-  dcControlSection: {fileID: 1622654343}
+  moduleControlSection: {fileID: 1622654343}
   panelWidth: 260
   cornerRadius: 0.1
-  sliderTrackColor: {r: 0.4, g: 0.4, b: 0.45, a: 0.9}
-  sliderFillColor: {r: 0.75, g: 0.75, b: 0.8, a: 1}
-  sliderHandleColor: {r: 0.95, g: 0.95, b: 0.98, a: 1}
-  sliderTextColor: {r: 0.92, g: 0.92, b: 0.95, a: 1}
 --- !u!1 &960000004
 GameObject:
   m_ObjectHideFlags: 0
@@ -7851,12 +7842,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1622654343}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81deee5da1fed420a968483eb81ae147, type: 3}
+  m_Script: {fileID: 11500000, guid: a8cea04e2e0d1409ab7a37c54fa2c98e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
-  degreesInputField: {fileID: 551864340}
+  m_EditorClassIdentifier: Assembly-CSharp::ControlPanel
+  inputField: {fileID: 551864340}
   directionDropdown: {fileID: 1266399282}
-  rotateButton: {fileID: 1448228083}
+  button: {fileID: 1448228083}
 --- !u!1 &1649492379
 GameObject:
   m_ObjectHideFlags: 0
@@ -8773,6 +8764,10 @@ MonoBehaviour:
   dcMotorModulePrefab: {fileID: 7364692261245862742, guid: 6ffe98828f23843f4814a5dc44baaf85, type: 3}
   servoBendModulePrefab: {fileID: 2587764185522029205, guid: 5c6ff9c85cb0b4e54a56a4714e2245e7, type: 3}
   servoStraightModulePrefab: {fileID: 6867075298355049526, guid: 3059d52069ecc4a25b965d348837f129, type: 3}
+  gripperModulePrefab: {fileID: 3270690827030321342, guid: 839ceb4bec3e147af8e11f2cbe38405e, type: 3}
+  displayModulePrefab: {fileID: 9087040773434933035, guid: 1d13960332e6840458c2d63f616e2774, type: 3}
+  distanceSensorModulePrefab: {fileID: 4820635649742989172, guid: 71a1ec0b30283422eafea6e72a83d947, type: 3}
+  imuSensorModulePrefab: {fileID: 7670757311786442011, guid: 78f1dcd3d1ad14720bec24368d935b13, type: 3}
 --- !u!4 &2021810912
 Transform:
   m_ObjectHideFlags: 0

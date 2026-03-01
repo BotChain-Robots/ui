@@ -4,6 +4,4 @@ using UnityEngine;
 
 public class HubModule : ModuleBase
 {
-    public override void OnSelect() { }
-    public override void DeSelect() { }
 }

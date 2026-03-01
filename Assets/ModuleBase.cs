@@ -6,9 +6,6 @@ public abstract class ModuleBase : MonoBehaviour
     public string moduleID { get; set; } = "";
     public double angle { get; set; } = 0; // also optional, for Servo/DC angle
 
-    public abstract void OnSelect();
-    public abstract void DeSelect();
-
     public void SendToControlLibrary(string moduleType, float currentAngle)
     {
         var json = "";

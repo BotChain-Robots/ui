@@ -53,12 +53,4 @@ public abstract class ServoMotorModule : ModuleBase
     // }
 
     public abstract void MoveArmPivot(float currentAngle);
-
-    public override void OnSelect()
-    {
-    }
-
-    public override void DeSelect()
-    {
-    }
 }

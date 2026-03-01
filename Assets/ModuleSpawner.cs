@@ -9,6 +9,10 @@ public class ModuleSpawner : MonoBehaviour
     public GameObject dcMotorModulePrefab;
     public GameObject servoBendModulePrefab;
     public GameObject servoStraightModulePrefab;
+    public GameObject gripperModulePrefab;
+    public GameObject displayModulePrefab;
+    public GameObject distanceSensorModulePrefab;
+    public GameObject imuSensorModulePrefab;
 
     public GameObject GetPrefabForType(ModuleType type)
     {
@@ -25,6 +29,14 @@ public class ModuleSpawner : MonoBehaviour
                 return servoBendModulePrefab;
             case ModuleType.SERVO_2:
                 return servoStraightModulePrefab;
+            case ModuleType.GRIPPER:
+                return gripperModulePrefab;
+            case ModuleType.DISPLAY:
+                return displayModulePrefab;
+            case ModuleType.DISTANCE_SENSOR:
+                return distanceSensorModulePrefab;
+            case ModuleType.IMU:
+                return imuSensorModulePrefab;
             default:
                 Debug.LogError("Unknown module type: " + type);
                 return null;

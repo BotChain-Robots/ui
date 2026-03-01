@@ -4,6 +4,4 @@ using UnityEngine;
 
 public class BatteryModule : ModuleBase
 {
-    public override void OnSelect() { }
-    public override void DeSelect() { }
 }

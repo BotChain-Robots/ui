@@ -188,6 +188,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -2189848377777591530, guid: 78fb54ff1ce8d48b9886d9638992bd2e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 8604045607132181640, guid: e0053319def084084aea8f8ccebb68ce, type: 3}
     - target: {fileID: 919132149155446097, guid: 78fb54ff1ce8d48b9886d9638992bd2e, type: 3}
       propertyPath: m_Name
       value: hub_module_mmmf_unity
