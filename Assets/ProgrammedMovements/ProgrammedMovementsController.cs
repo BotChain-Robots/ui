@@ -40,7 +40,7 @@ public class ProgrammedMovementsController : MonoBehaviour
         ResolveReferences();
         if (_bannerRoot == null)
         {
-            Debug.LogError("[ProgrammedMovements] timelineRoot not set. Run Tools > ProgrammedMovements > Setup UI Hierarchy in the Editor.");
+            Debug.LogError("[ProgrammedMovements] timelineRoot not set. Assign it in the Inspector.");
             return;
         }
         EnsureTimelineViewShown();
