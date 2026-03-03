@@ -118,6 +118,7 @@ public class TopologyBuilder : MonoBehaviour
             case "Display": return ModuleType.DISPLAY;
             case "Distance": return ModuleType.DISTANCE_SENSOR;
             case "IMU": return ModuleType.IMU;
+            case "Speaker": return ModuleType.SPEAKER;
             default: return ModuleType.SPLITTER;
         }
     }

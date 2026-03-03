@@ -23,7 +23,6 @@ public class LiveViewModulePanel : MonoBehaviour
 
     private bool _sliderDragging;
     private ControlPanel panel;
-    private ModuleBase _lastSelected;
     private GameObject sensorTextContainer;
     private readonly System.Collections.Generic.List<TextMeshProUGUI> sensorTextLines = new System.Collections.Generic.List<TextMeshProUGUI>();
 
@@ -67,7 +66,6 @@ public class LiveViewModulePanel : MonoBehaviour
 
         if (selected == null)
         {
-            _lastSelected = null;
             SetModuleInfo("No module selected");
             SetServoSectionActive(false);
             SetModuleControlSectionActive(false);
@@ -85,6 +83,7 @@ public class LiveViewModulePanel : MonoBehaviour
         var display = selected as DisplayModule;
         var distance = selected as DistanceSensorModule;
         var imu = selected as IMUSensorModule;
+        var speaker = selected as SpeakerModule;
 
         if (servo != null)
         {
@@ -119,18 +118,12 @@ public class LiveViewModulePanel : MonoBehaviour
         }
 
         // DC or Display both use the same control section
-        if (dc != null || display != null)
+        if (dc != null || display != null || speaker != null)
         {
             SetServoSectionActive(false);
             SetModuleControlSectionActive(true);
-            SetSensorTextActive(false);
 
-            if (selected != _lastSelected)
-            {
-                _lastSelected = selected;
-                panel?.Initialize(selected);
-            }
-
+            panel?.Initialize(selected);
             return;
         }
 
@@ -257,11 +250,12 @@ public class LiveViewModulePanel : MonoBehaviour
         if (m is DCMotorModule) return "DC";
         if (m is DisplayModule) return "Display";
         if (m is HubModule) return "Hub";
-        if (m is BatteryModule) return "Battery";
+        if (m is PowerModule) return "Power";
         if (m is GripperModule) return "Gripper";
         if (m is DisplayModule) return "Display";
         if (m is DistanceSensorModule) return "Distance Sensor";
         if (m is IMUSensorModule) return "IMU Sensor";
+        if (m is SpeakerModule) return "Speaker";
         return m.GetType().Name;
     }
 

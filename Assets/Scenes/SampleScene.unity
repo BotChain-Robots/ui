@@ -946,7 +946,7 @@ MonoBehaviour:
   spawner: {fileID: 2021810911}
   useJsonFile: 1
   skipControlLibraryCalls: 0
-  jsonFileName: mockDataSimple
+  jsonFileName: mockData
 --- !u!4 &387671720
 Transform:
   m_ObjectHideFlags: 0
@@ -4223,10 +4223,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 4077927847297772526, guid: 46058ab5ebab64d548b4008f54df1f6d, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 46058ab5ebab64d548b4008f54df1f6d, type: 3}
 --- !u!1 &943453643
@@ -6021,119 +6018,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5c6ff9c85cb0b4e54a56a4714e2245e7, type: 3}
---- !u!1001 &1309657867
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 447450379}
-    m_Modifications:
-    - target: {fileID: 3506715766167772924, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.0024008183
-      objectReference: {fileID: 0}
-    - target: {fileID: 3506715766167772924, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.0059973295
-      objectReference: {fileID: 0}
-    - target: {fileID: 3506715766167772924, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.0005073524
-      objectReference: {fileID: 0}
-    - target: {fileID: 3506715766167772924, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.6974705
-      objectReference: {fileID: 0}
-    - target: {fileID: 3506715766167772924, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.7166136
-      objectReference: {fileID: 0}
-    - target: {fileID: 3506715766167772924, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.0000031748782
-      objectReference: {fileID: 0}
-    - target: {fileID: 3506715766167772924, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.000025998797
-      objectReference: {fileID: 0}
-    - target: {fileID: 3506715766167772924, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 91.550995
-      objectReference: {fileID: 0}
-    - target: {fileID: 3506715766167772924, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0.069000244
-      objectReference: {fileID: 0}
-    - target: {fileID: 3506715766167772924, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0.06700134
-      objectReference: {fileID: 0}
-    - target: {fileID: 3563533490444010952, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_Name
-      value: DCMotorModule
-      objectReference: {fileID: 0}
-    - target: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.09662003
-      objectReference: {fileID: 0}
-    - target: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.019779649
-      objectReference: {fileID: 0}
-    - target: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.023702811
-      objectReference: {fileID: 0}
-    - target: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: -0.4927276
-      objectReference: {fileID: 0}
-    - target: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.5017962
-      objectReference: {fileID: 0}
-    - target: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.49552006
-      objectReference: {fileID: 0}
-    - target: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.50978434
-      objectReference: {fileID: 0}
-    - target: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0.49
-      objectReference: {fileID: 0}
-    - target: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 1.335
-      objectReference: {fileID: 0}
-    - target: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -89.367
-      objectReference: {fileID: 0}
-    - target: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
 --- !u!4 &1375238161 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7998878104662105930, guid: 5c6ff9c85cb0b4e54a56a4714e2245e7, type: 3}
@@ -8759,7 +8643,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63e1e2b9c1bac4a1bb3906c33e11ce3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  batteryModulePrefab: {fileID: 3736973296473420116, guid: 46058ab5ebab64d548b4008f54df1f6d, type: 3}
+  batteryModulePrefab: {fileID: 5681477249120589453, guid: 2d0654bf410fb459196f824c861fff6b, type: 3}
   hubModulePrefab: {fileID: 2038062744777034846, guid: 2e29377717f1046f2b6b15656dd58cc2, type: 3}
   dcMotorModulePrefab: {fileID: 7364692261245862742, guid: 6ffe98828f23843f4814a5dc44baaf85, type: 3}
   servoBendModulePrefab: {fileID: 2587764185522029205, guid: 5c6ff9c85cb0b4e54a56a4714e2245e7, type: 3}
@@ -8768,6 +8652,7 @@ MonoBehaviour:
   displayModulePrefab: {fileID: 9087040773434933035, guid: 1d13960332e6840458c2d63f616e2774, type: 3}
   distanceSensorModulePrefab: {fileID: 4820635649742989172, guid: 71a1ec0b30283422eafea6e72a83d947, type: 3}
   imuSensorModulePrefab: {fileID: 7670757311786442011, guid: 78f1dcd3d1ad14720bec24368d935b13, type: 3}
+  speakerModulePrefab: {fileID: 7364806464279017071, guid: 8bcdcbcb5a03245248cb7f883e80d948, type: 3}
 --- !u!4 &2021810912
 Transform:
   m_ObjectHideFlags: 0

@@ -13,6 +13,7 @@ public class ModuleSpawner : MonoBehaviour
     public GameObject displayModulePrefab;
     public GameObject distanceSensorModulePrefab;
     public GameObject imuSensorModulePrefab;
+    public GameObject speakerModulePrefab;
 
     public GameObject GetPrefabForType(ModuleType type)
     {
@@ -37,6 +38,8 @@ public class ModuleSpawner : MonoBehaviour
                 return distanceSensorModulePrefab;
             case ModuleType.IMU:
                 return imuSensorModulePrefab;
+            case ModuleType.SPEAKER:
+                return speakerModulePrefab;
             default:
                 Debug.LogError("Unknown module type: " + type);
                 return null;
