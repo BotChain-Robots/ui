@@ -21,6 +21,10 @@ PrefabInstance:
       value: ServoBendModuleFinal
       objectReference: {fileID: 0}
     - target: {fileID: 3298615727327907093, guid: 4b60ff46518f54cdea157ba10a27703b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.0461
+      objectReference: {fileID: 0}
+    - target: {fileID: 3298615727327907093, guid: 4b60ff46518f54cdea157ba10a27703b, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.012000001
       objectReference: {fileID: 0}
