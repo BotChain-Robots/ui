@@ -28,7 +28,7 @@ public class ModuleSpawner : MonoBehaviour
             case ModuleType.SPLITTER:
                 return hubModulePrefab;
             case ModuleType.DC_MOTOR:
-                return dcMotorModulePrefab;
+                return null; // DC module deactivated
             case ModuleType.SERVO_1:
                 return servoBendModulePrefab;
             case ModuleType.SERVO_2:
