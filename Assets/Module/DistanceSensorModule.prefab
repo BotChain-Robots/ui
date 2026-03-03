@@ -79,6 +79,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   objectDetected: 0
   distanceMeters: 0
+  infoLines: []
 --- !u!1 &5041994602013865196
 GameObject:
   m_ObjectHideFlags: 0
@@ -146,7 +147,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 7397659539795428015, guid: 7e681772ef5614e68a73639cbbae6f05, type: 3}
+  - {fileID: 2100000, guid: 66bb025986bd66c479f0fe7e007798b0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

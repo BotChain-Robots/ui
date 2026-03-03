@@ -21,7 +21,7 @@ public class ViewBannerUI : MonoBehaviour
     [Header("Colors")]
     [SerializeField] private Color bannerBackground = Color.black;
     [SerializeField] private Color buttonDefault = Color.white;
-    [SerializeField] private Color buttonSelected = Color.white;
+    [SerializeField] private Color buttonSelected = new Color(177f / 255f, 1f, 199f / 255f, 1f); // #B1FFC7
     [SerializeField] private Color buttonTextColor = Color.black;
 
     private GameObject _liveViewRoot;
@@ -140,7 +140,7 @@ public class ViewBannerUI : MonoBehaviour
         var image = go.AddComponent<Image>();
         image.color = buttonDefault;
         image.raycastTarget = true;
-        image.sprite = CreateRoundedRectSprite();
+        image.sprite = UIRoundedSprite.GetRoundedRectSprite();
         image.type = Image.Type.Simple;
 
         var button = go.AddComponent<Button>();
@@ -174,34 +174,4 @@ public class ViewBannerUI : MonoBehaviour
         return image;
     }
 
-    private static Sprite _roundedRectSprite;
-
-    /// <summary>
-    /// Creates or returns a cached white rounded-rectangle sprite for button backgrounds.
-    /// </summary>
-    private static Sprite CreateRoundedRectSprite()
-    {
-        if (_roundedRectSprite != null)
-            return _roundedRectSprite;
-
-        const int size = 64;
-        const int radius = 12;
-        var tex = new Texture2D(size, size);
-        var pixels = new Color32[size * size];
-        float r = radius - 0.5f;
-        for (int y = 0; y < size; y++)
-        for (int x = 0; x < size; x++)
-        {
-            float dx = x < r ? r - x : (x >= size - r ? x - (size - 1 - r) : 0);
-            float dy = y < r ? r - y : (y >= size - r ? y - (size - 1 - r) : 0);
-            float d = Mathf.Sqrt(dx * dx + dy * dy);
-            byte a = (byte)Mathf.Clamp(Mathf.RoundToInt(255 * (1f - Mathf.Clamp01((d - r) / 1.5f))), 0, 255);
-            pixels[y * size + x] = new Color32(255, 255, 255, a);
-        }
-        tex.SetPixels32(pixels);
-        tex.Apply(true, true);
-        tex.filterMode = FilterMode.Bilinear;
-        _roundedRectSprite = Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f));
-        return _roundedRectSprite;
-    }
 }

@@ -183,6 +183,12 @@ public class TopologyBuilder : MonoBehaviour
                     }
                     servo.InitialSetAngle(module.Degree);
                 }
+                else if (parsedType == ModuleType.GRIPPER)
+                {
+                    var gripper = instance.GetComponent<GripperModule>();
+                    if (gripper != null)
+                        gripper.InitialSetAngle(module.Degree);
+                }
             }
         }
 
