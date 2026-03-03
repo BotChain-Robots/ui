@@ -323,7 +323,7 @@ public class LiveViewModulePanel : MonoBehaviour
         if (m is DCMotorModule) return "DC";
         if (m is DisplayModule) return "Display";
         if (m is HubModule) return "Hub";
-        if (m is PowerModule) return "Battery";
+        if (m is PowerModule) return "Power";
         if (m is GripperModule) return "Gripper";
         if (m is DisplayModule) return "Display";
         if (m is DistanceSensorModule) return "Distance Sensor";

@@ -21,5 +21,6 @@ public enum ModuleType : sbyte
   SPLITTER_6 = 14,
   SPLITTER_7 = 15,
   SPLITTER_8 = 16,
+  POWER = 17,
 };
 

@@ -114,6 +114,7 @@ public class TopologyBuilder : MonoBehaviour
             case "DC": return ModuleType.DC_MOTOR;
             case "Hub": return ModuleType.SPLITTER;
             case "Battery": return ModuleType.BATTERY;
+            case "Power": return ModuleType.POWER;
             case "Gripper": return ModuleType.GRIPPER;
             case "Display": return ModuleType.DISPLAY;
             case "Distance": return ModuleType.DISTANCE_SENSOR;

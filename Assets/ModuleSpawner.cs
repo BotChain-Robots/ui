@@ -14,6 +14,7 @@ public class ModuleSpawner : MonoBehaviour
     public GameObject distanceSensorModulePrefab;
     public GameObject imuSensorModulePrefab;
     public GameObject speakerModulePrefab;
+    public GameObject powerModulePrefab;
 
     public GameObject GetPrefabForType(ModuleType type)
     {
@@ -22,6 +23,8 @@ public class ModuleSpawner : MonoBehaviour
         {
             case ModuleType.BATTERY:
                 return batteryModulePrefab;
+            case ModuleType.POWER:
+                return powerModulePrefab;
             case ModuleType.SPLITTER:
                 return hubModulePrefab;
             case ModuleType.DC_MOTOR:
