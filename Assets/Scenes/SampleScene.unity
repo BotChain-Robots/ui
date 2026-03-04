@@ -4093,6 +4093,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1319424261}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!4 &907893356 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5278868739616043210, guid: 7731927cf621844b6aad08f3b4f9e278, type: 3}
+  m_PrefabInstance: {fileID: 1309657867}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &910000001
 GameObject:
   m_ObjectHideFlags: 0
@@ -4664,7 +4669,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4077927847297772526, guid: 46058ab5ebab64d548b4008f54df1f6d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 907893356}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 46058ab5ebab64d548b4008f54df1f6d, type: 3}
 --- !u!1 &943453643
@@ -9535,8 +9543,7 @@ MonoBehaviour:
   displayModulePrefab: {fileID: 9087040773434933035, guid: 1d13960332e6840458c2d63f616e2774, type: 3}
   distanceSensorModulePrefab: {fileID: 4820635649742989172, guid: 71a1ec0b30283422eafea6e72a83d947, type: 3}
   imuSensorModulePrefab: {fileID: 7670757311786442011, guid: 78f1dcd3d1ad14720bec24368d935b13, type: 3}
-  speakerModulePrefab: {fileID: 0}
-  powerModulePrefab: {fileID: 0}
+  speakerModulePrefab: {fileID: 7364806464279017071, guid: 8bcdcbcb5a03245248cb7f883e80d948, type: 3}
 --- !u!4 &2021810912
 Transform:
   m_ObjectHideFlags: 0
@@ -10415,4 +10422,3 @@ SceneRoots:
   - {fileID: 2031445727}
   - {fileID: 859822641}
   - {fileID: 1319424261}
-  - {fileID: 1309657867}

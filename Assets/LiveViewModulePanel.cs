@@ -23,14 +23,12 @@ public class LiveViewModulePanel : MonoBehaviour
 
     private bool _sliderDragging;
     private ControlPanel panel;
-    private ModuleBase _lastSelected;
     private GameObject sensorTextContainer;
     private readonly System.Collections.Generic.List<TextMeshProUGUI> sensorTextLines = new System.Collections.Generic.List<TextMeshProUGUI>();
 
     void Start()
     {
         CreateSensorTextUI();
-        ApplyRoundedCornersToPanel();
 
         if (servoAngleSlider != null)
         {
@@ -38,7 +36,6 @@ public class LiveViewModulePanel : MonoBehaviour
             servoAngleSlider.maxValue = 180f;
             servoAngleSlider.direction = Slider.Direction.BottomToTop;
             servoAngleSlider.onValueChanged.AddListener(OnServoSliderChanged);
-            ConfigureSliderForVertical(servoAngleSlider);
 
             var et = servoAngleSlider.GetComponent<EventTrigger>() ?? servoAngleSlider.gameObject.AddComponent<EventTrigger>();
             var begin = new EventTrigger.Entry { eventID = EventTriggerType.BeginDrag };
@@ -69,7 +66,6 @@ public class LiveViewModulePanel : MonoBehaviour
 
         if (selected == null)
         {
-            _lastSelected = null;
             SetModuleInfo("No module selected");
             SetServoSectionActive(false);
             SetModuleControlSectionActive(false);
@@ -87,6 +83,7 @@ public class LiveViewModulePanel : MonoBehaviour
         var display = selected as DisplayModule;
         var distance = selected as DistanceSensorModule;
         var imu = selected as IMUSensorModule;
+        var speaker = selected as SpeakerModule;
 
         if (servo != null)
         {
@@ -120,20 +117,13 @@ public class LiveViewModulePanel : MonoBehaviour
             return;
         }
 
-        // DC, Display, or Gripper use the same control section (degrees input + button)
-        var gripper = selected as GripperModule;
-        if (dc != null || display != null || gripper != null)
+        // DC or Display both use the same control section
+        if (dc != null || display != null || speaker != null)
         {
             SetServoSectionActive(false);
             SetModuleControlSectionActive(true);
-            SetSensorTextActive(false);
 
-            if (selected != _lastSelected)
-            {
-                _lastSelected = selected;
-                panel?.Initialize(selected);
-            }
-
+            panel?.Initialize(selected);
             return;
         }
 
@@ -141,16 +131,6 @@ public class LiveViewModulePanel : MonoBehaviour
         SetServoSectionActive(false);
         SetModuleControlSectionActive(false);
         SetSensorTextActive(false);
-    }
-
-    void ApplyRoundedCornersToPanel()
-    {
-        var img = GetComponent<Image>();
-        if (img != null && img.sprite == null)
-        {
-            img.sprite = UIRoundedSprite.GetRoundedRectSprite();
-            img.type = Image.Type.Sliced; // 9-slice keeps corners rounded when panel stretches
-        }
     }
 
     void SetModuleControlSectionActive(bool active)
@@ -179,59 +159,6 @@ public class LiveViewModulePanel : MonoBehaviour
     {
         if (ServoMotorModule.selectedModule != null)
             ServoMotorModule.selectedModule.SetAngleAndSendControlLibrary(value);
-    }
-
-    void ConfigureSliderForVertical(Slider slider)
-    {
-        if (slider == null || servoControlSection == null) return;
-        var sectionRect = servoControlSection.GetComponent<RectTransform>();
-        if (sectionRect != null)
-            EnsureDegreeLabels(sectionRect);
-    }
-
-    void EnsureDegreeLabels(RectTransform sectionRect)
-    {
-        SetDegreeLabel(sectionRect, "0deg", "0", 0, 14);
-        SetDegreeLabel(sectionRect, "180deg", "180", 1, -14);
-    }
-
-    void SetDegreeLabel(RectTransform sectionRect, string goName, string text, float anchorY, float posY)
-    {
-        var t = sectionRect.Find(goName);
-        if (t == null)
-        {
-            var go = new GameObject(goName);
-            go.transform.SetParent(sectionRect, false);
-            var tmp = go.AddComponent<TextMeshProUGUI>();
-            tmp.text = text;
-            tmp.fontSize = 16;
-            tmp.color = Color.white;
-            tmp.alignment = TextAlignmentOptions.MidlineLeft;
-            var r = go.GetComponent<RectTransform>();
-            r.anchorMin = new Vector2(1f, anchorY);
-            r.anchorMax = new Vector2(1f, anchorY);
-            r.pivot = new Vector2(0f, 0.5f);
-            r.anchoredPosition = new Vector2(20, posY);
-            r.sizeDelta = new Vector2(50, 24);
-        }
-        else
-        {
-            var tmp = t.GetComponent<TextMeshProUGUI>();
-            if (tmp != null)
-            {
-                tmp.color = Color.white;
-                tmp.fontSize = 16;
-            }
-            var r = t.GetComponent<RectTransform>();
-            if (r != null)
-            {
-                r.anchorMin = new Vector2(1f, anchorY);
-                r.anchorMax = new Vector2(1f, anchorY);
-                r.pivot = new Vector2(0f, 0.5f);
-                r.anchoredPosition = new Vector2(20, posY);
-                r.sizeDelta = new Vector2(50, 24);
-            }
-        }
     }
 
     void CreateSensorTextUI()
