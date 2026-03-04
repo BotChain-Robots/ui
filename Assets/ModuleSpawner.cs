@@ -262,6 +262,7 @@ public class ModuleSpawner : MonoBehaviour
             case "MaleSocket1":
             case "MaleSocket2":
             case "MaleSocket3":
+            case "MaleSocket4":
                 // Hub
                 return module.transform.Find(socketName);
 
