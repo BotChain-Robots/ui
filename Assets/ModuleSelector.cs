@@ -51,7 +51,6 @@ public class ModuleSelector : MonoBehaviour
                 ModuleBase module = hit.collider.GetComponentInParent<ModuleBase>();
                 if (module != null)
                 {
-                    module.OnSelect();
                     prevModule = module;
 
                     // Servo highlighting support
@@ -76,7 +75,6 @@ public class ModuleSelector : MonoBehaviour
     {
         if (prevModule != null)
         {
-            prevModule.DeSelect();
             prevModule = null;
         }
 

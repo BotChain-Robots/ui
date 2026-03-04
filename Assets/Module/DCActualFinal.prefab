@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 3292419760055380793}
   serializedVersion: 2
   m_LocalRotation: {x: 0.010896653, y: -0.010896653, z: 0.7070228, w: 0.70702285}
-  m_LocalPosition: {x: 0.00030999756, y: -0.050009932, z: -0.0014218215}
+  m_LocalPosition: {x: 0.0003, y: -0.0603, z: -0.0017}
   m_LocalScale: {x: 0.049999997, y: 0.049999997, z: 0.05}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -90,6 +90,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -111,9 +116,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &182848113984496985
 BoxCollider:
@@ -226,7 +233,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8274056087524456700}
-  m_Mesh: {fileID: 8604045607132181640, guid: 02370d6fa17f742f393ad699c6e30f40, type: 3}
+  m_Mesh: {fileID: 8604045607132181640, guid: 119e4c1cb9d084a1fb57a05adbd9f2f2, type: 3}
 --- !u!23 &5298970936615407170
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -244,10 +251,15 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 7397659539795428015, guid: 02370d6fa17f742f393ad699c6e30f40, type: 3}
+  - {fileID: 2100000, guid: 66bb025986bd66c479f0fe7e007798b0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -265,9 +277,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &8075788923889194193
 BoxCollider:

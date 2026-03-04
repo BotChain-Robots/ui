@@ -3,10 +3,6 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 
-/// <summary>
-/// Unified side panel for LiveView: shows module info and either servo (vertical slider) or DC controls.
-/// Attach to ModuleControlSidePanel in the scene; assign refs in inspector.
-/// </summary>
 public class LiveViewModulePanel : MonoBehaviour
 {
     [Header("Module Info")]
@@ -17,116 +13,46 @@ public class LiveViewModulePanel : MonoBehaviour
     public Slider servoAngleSlider;
     public TextMeshProUGUI servoAngleLabel;
 
-    [Header("DC Control")]
-    public GameObject dcControlSection;
+    [Header("DC + Display Control (Reused)")]
+    public GameObject moduleControlSection;
 
     [Header("Panel Layout")]
-    [Tooltip("Width of the side panel")]
     public float panelWidth = 260f;
-    [Tooltip("Corner radius for rounded corners (0-0.5)")]
     [Range(0f, 0.5f)]
     public float cornerRadius = 0.12f;
 
-    [Header("Slider Styling")]
-    public Color sliderTrackColor = new Color(0.4f, 0.4f, 0.45f, 0.9f);
-    public Color sliderFillColor = new Color(0.75f, 0.75f, 0.8f, 1f);
-    public Color sliderHandleColor = new Color(0.95f, 0.95f, 0.98f, 1f);
-    public Color sliderTextColor = new Color(0.92f, 0.92f, 0.95f, 1f);
-
     private bool _sliderDragging;
-    private DCMotorControlPanel _dcPanel;
+    private ControlPanel panel;
+    private GameObject sensorTextContainer;
+    private readonly System.Collections.Generic.List<TextMeshProUGUI> sensorTextLines = new System.Collections.Generic.List<TextMeshProUGUI>();
 
     void Start()
     {
+        CreateSensorTextUI();
+
         if (servoAngleSlider != null)
         {
             servoAngleSlider.minValue = 0f;
             servoAngleSlider.maxValue = 180f;
             servoAngleSlider.direction = Slider.Direction.BottomToTop;
             servoAngleSlider.onValueChanged.AddListener(OnServoSliderChanged);
-            ConfigureSliderForVertical(servoAngleSlider);
+
             var et = servoAngleSlider.GetComponent<EventTrigger>() ?? servoAngleSlider.gameObject.AddComponent<EventTrigger>();
             var begin = new EventTrigger.Entry { eventID = EventTriggerType.BeginDrag };
-            begin.callback.AddListener(_ => OnServoSliderBeginDrag());
+            begin.callback.AddListener(_ => _sliderDragging = true);
             et.triggers.Add(begin);
+
             var end = new EventTrigger.Entry { eventID = EventTriggerType.EndDrag };
-            end.callback.AddListener(_ => OnServoSliderEndDrag());
+            end.callback.AddListener(_ => _sliderDragging = false);
             et.triggers.Add(end);
         }
 
-        var oldController = FindObjectOfType<ServoModuleUISliderController>(true);
-        if (oldController != null) oldController.enabled = false;
+        // Get ControlPanel from the reused section
+        panel = moduleControlSection != null ? moduleControlSection.GetComponent<ControlPanel>() : null;
+        if (panel == null)
+            panel = FindObjectOfType<ControlPanel>(true);
 
-        _dcPanel = dcControlSection != null ? dcControlSection.GetComponent<DCMotorControlPanel>() : null;
-        if (_dcPanel == null)
-            _dcPanel = FindObjectOfType<DCMotorControlPanel>(true);
-
-        ApplyRoundedMaterial();
         UpdatePanel();
-    }
-
-    void ApplyRoundedMaterial()
-    {
-        var img = GetComponent<Image>();
-        if (img == null || (img.material != null && img.material.shader != null && img.material.shader.name == "UI/RoundedRect")) return;
-        var shader = Shader.Find("UI/RoundedRect");
-        if (shader == null) return;
-        var mat = new Material(shader);
-        mat.SetFloat("_Radius", cornerRadius);
-        img.material = mat;
-    }
-
-    void ConfigureSliderForVertical(Slider slider)
-    {
-        if (slider == null || servoControlSection == null) return;
-        var sectionRect = servoControlSection.GetComponent<RectTransform>();
-        if (sectionRect != null)
-            EnsureDegreeLabels(sectionRect);
-    }
-
-    void EnsureDegreeLabels(RectTransform sectionRect)
-    {
-        SetDegreeLabel(sectionRect, "0deg", "0°", 0, 14);
-        SetDegreeLabel(sectionRect, "180deg", "180°", 1, -14);
-    }
-
-    void SetDegreeLabel(RectTransform sectionRect, string goName, string text, float anchorY, float posY)
-    {
-        var t = sectionRect.Find(goName);
-        if (t == null)
-        {
-            var go = new GameObject(goName);
-            go.transform.SetParent(sectionRect, false);
-            var tmp = go.AddComponent<TextMeshProUGUI>();
-            tmp.text = text;
-            tmp.fontSize = 16;
-            tmp.color = Color.white;
-            tmp.alignment = TextAlignmentOptions.MidlineLeft;
-            var r = go.GetComponent<RectTransform>();
-            r.anchorMin = new Vector2(1f, anchorY);
-            r.anchorMax = new Vector2(1f, anchorY);
-            r.pivot = new Vector2(0f, 0.5f);
-            r.anchoredPosition = new Vector2(20, posY);
-            r.sizeDelta = new Vector2(50, 24);
-        }
-        else
-        {
-            var tmp = t.GetComponent<TextMeshProUGUI>();
-            if (tmp != null)
-            {
-                tmp.color = Color.white;
-                tmp.fontSize = 16;
-            }
-            var r = t.GetComponent<RectTransform>();
-            if (r != null)
-            {
-                r.anchorMin = new Vector2(1f, anchorY);
-                r.anchorMax = new Vector2(1f, anchorY);
-                r.pivot = new Vector2(0f, 0.5f);
-                r.anchoredPosition = new Vector2(20, posY);
-                r.sizeDelta = new Vector2(50, 24);
-            }
-        }
     }
 
     void Update()
@@ -142,55 +68,79 @@ public class LiveViewModulePanel : MonoBehaviour
         {
             SetModuleInfo("No module selected");
             SetServoSectionActive(false);
-            SetDCSectionActive(false);
+            SetModuleControlSectionActive(false);
+            SetSensorTextActive(false);
             return;
         }
 
+        // Info text
         string typeName = GetModuleTypeName(selected);
         string degreeInfo = GetDegreeInfo(selected);
-        string info = string.IsNullOrEmpty(degreeInfo)
-            ? $"Type: {typeName}"
-            : $"Type: {typeName}\n{degreeInfo}";
-        SetModuleInfo(info);
+        SetModuleInfo(string.IsNullOrEmpty(degreeInfo) ? $"Type: {typeName}" : $"Type: {typeName}\n{degreeInfo}");
 
         var servo = selected as ServoMotorModule;
         var dc = selected as DCMotorModule;
+        var display = selected as DisplayModule;
+        var distance = selected as DistanceSensorModule;
+        var imu = selected as IMUSensorModule;
+        var speaker = selected as SpeakerModule;
 
         if (servo != null)
         {
             SetServoSectionActive(true);
-            SetDCSectionActive(false);
+            SetModuleControlSectionActive(false);
+            SetSensorTextActive(false);
+
             if (servoAngleSlider != null && !_sliderDragging)
                 servoAngleSlider.SetValueWithoutNotify(servo.currentAngle);
+
+            return;
         }
-        else if (dc != null)
+
+        if (distance != null)
         {
             SetServoSectionActive(false);
-            SetDCSectionActive(true);
+            SetModuleControlSectionActive(false);
+
+            SetSensorTextActive(true);
+            SetSensorLines(distance.GetInfoLines()); // implement like IMU or build here
+            return;
         }
+
+        if (imu != null)
+        {
+            SetServoSectionActive(false);
+            SetModuleControlSectionActive(false);
+
+            SetSensorTextActive(true);
+            SetSensorLines(imu.GetInfoLines());
+            return;
+        }
+
+        // DC or Display both use the same control section
+        if (dc != null || display != null || speaker != null)
+        {
+            SetServoSectionActive(false);
+            SetModuleControlSectionActive(true);
+
+            panel?.Initialize(selected);
+            return;
+        }
+
+        // Other types
+        SetServoSectionActive(false);
+        SetModuleControlSectionActive(false);
+        SetSensorTextActive(false);
+    }
+
+    void SetModuleControlSectionActive(bool active)
+    {
+        if (moduleControlSection == null || panel == null) return;
+
+        if (active)
+            panel.gameObject.SetActive(true);
         else
-        {
-            SetServoSectionActive(false);
-            SetDCSectionActive(false);
-        }
-    }
-
-    string GetModuleTypeName(ModuleBase m)
-    {
-        if (m is ServoBendModule) return "Servo Bend";
-        if (m is ServoStraightModule) return "Servo Straight";
-        if (m is DCMotorModule) return "DC";
-        if (m is HubModule) return "Hub";
-        if (m is BatteryModule) return "Battery";
-        return m.GetType().Name;
-    }
-
-    string GetDegreeInfo(ModuleBase m)
-    {
-        var servo = m as ServoMotorModule;
-        if (servo != null)
-            return $"Joint: {servo.currentAngle:F1}°";
-        return "";
+            panel.HidePanel();
     }
 
     void SetModuleInfo(string text)
@@ -205,30 +155,104 @@ public class LiveViewModulePanel : MonoBehaviour
             servoControlSection.SetActive(active);
     }
 
-    void SetDCSectionActive(bool active)
-    {
-        if (dcControlSection != null)
-        {
-            if (active && _dcPanel != null)
-                _dcPanel.gameObject.SetActive(true);
-            else if (!active && _dcPanel != null)
-                _dcPanel.HidePanel();
-        }
-    }
-
     void OnServoSliderChanged(float value)
     {
         if (ServoMotorModule.selectedModule != null)
             ServoMotorModule.selectedModule.SetAngleAndSendControlLibrary(value);
     }
 
-    public void OnServoSliderBeginDrag()
+    void CreateSensorTextUI()
     {
-        _sliderDragging = true;
+        if (moduleInfoText == null) return;
+        var parent = moduleInfoText.transform.parent;
+        if (parent == null) return;
+
+        sensorTextContainer = new GameObject("SensorTextContainer");
+        sensorTextContainer.transform.SetParent(parent, false);
+
+        var src = moduleInfoText.rectTransform;
+        var rt = sensorTextContainer.AddComponent<RectTransform>();
+
+        // Place under the moduleInfoText
+        rt.anchorMin = src.anchorMin;
+        rt.anchorMax = src.anchorMax;
+        rt.pivot = src.pivot;
+        rt.anchoredPosition = src.anchoredPosition + new Vector2(0f, -70f);
+        rt.sizeDelta = new Vector2(src.sizeDelta.x, 220f);
+
+        sensorTextContainer.SetActive(false);
     }
 
-    public void OnServoSliderEndDrag()
+    void SetSensorTextActive(bool active)
     {
-        _sliderDragging = false;
+        if (sensorTextContainer != null && sensorTextContainer.activeSelf != active)
+            sensorTextContainer.SetActive(active);
+    }
+
+    void EnsureSensorLineCount(int count)
+    {
+        if (sensorTextContainer == null) return;
+
+        while (sensorTextLines.Count < count)
+        {
+            var go = new GameObject($"SensorLine{sensorTextLines.Count}");
+            go.transform.SetParent(sensorTextContainer.transform, false);
+
+            var tmp = go.AddComponent<TextMeshProUGUI>();
+
+            // Match your UI font + material
+            tmp.font = moduleInfoText.font;
+            tmp.fontSharedMaterial = moduleInfoText.fontSharedMaterial;
+
+            // Your requested style (like screenshot)
+            tmp.fontStyle = FontStyles.Bold;
+            tmp.fontSize = 22f;
+            tmp.enableAutoSizing = false;
+            tmp.color = Color.white;
+            tmp.enableVertexGradient = false;
+
+            tmp.alignment = TextAlignmentOptions.TopLeft;
+            tmp.enableWordWrapping = true;
+
+            // Layout: stacked lines
+            var rt = tmp.rectTransform;
+            rt.anchorMin = new Vector2(0f, 1f);
+            rt.anchorMax = new Vector2(1f, 1f);
+            rt.pivot = new Vector2(0f, 1f);
+
+            float lineH = 26f;
+            float y = -sensorTextLines.Count * lineH;
+            rt.anchoredPosition = new Vector2(0f, y);
+            rt.sizeDelta = new Vector2(0f, lineH);
+
+            sensorTextLines.Add(tmp);
+        }
+
+        // Hide extras
+        for (int i = 0; i < sensorTextLines.Count; i++)
+            sensorTextLines[i].gameObject.SetActive(i < count);
+    }
+
+    void SetSensorLines(string[] lines)
+    {
+        if (lines == null) lines = new string[0];
+
+        EnsureSensorLineCount(lines.Length);
+
+        for (int i = 0; i < lines.Length; i++)
+            sensorTextLines[i].text = lines[i];
+    }
+
+    string GetModuleTypeName(ModuleBase m)
+    {
+        return m != null ? m.moduleName : "Unknown";
+    }
+
+    string GetDegreeInfo(ModuleBase m)
+    {
+        var servo = m as ServoMotorModule;
+        if (servo != null)
+            return $"Joint: {servo.currentAngle:F1}°";
+        return "";
     }
 }

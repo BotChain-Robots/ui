@@ -5,23 +5,23 @@ public abstract class ModuleBase : MonoBehaviour
 {
     public string moduleID { get; set; } = "";
     public double angle { get; set; } = 0; // also optional, for Servo/DC angle
-
-    public abstract void OnSelect();
-    public abstract void DeSelect();
+    public abstract string moduleType { get; }
+    public abstract string moduleName { get; }
 
     public void SendToControlLibrary(string moduleType, float currentAngle)
     {
+        int angleRounded = Mathf.RoundToInt(currentAngle);
         var json = "";
-        if (moduleType.Contains("Servo"))
+        if (moduleType.Contains("Servo") || moduleType == "Gripper")
         {
             json = JsonUtility.ToJson(new ServoCommand
             {
                 ModuleId = moduleID,
                 Type = moduleType,
-                TargetAngle = currentAngle
+                TargetAngle = angleRounded
             });
         }
-        else if(moduleType == "DC")
+        else if (moduleType == "DC")
         {
             string direction = "Forwards";
             if (currentAngle < 0)
@@ -32,7 +32,7 @@ public abstract class ModuleBase : MonoBehaviour
             {
                 ModuleId = moduleID,
                 Type = moduleType,
-                RotateByDegrees = Math.Abs(currentAngle),
+                RotateByDegrees = Math.Abs(angleRounded),
                 Direction = direction
             });
         }
@@ -41,7 +41,7 @@ public abstract class ModuleBase : MonoBehaviour
         {
             return;
         }
-        if (0 != ControlLibrary.send_angle_control(Int32.Parse(moduleID), (int)currentAngle))
+        if (0 != ControlLibrary.send_angle_control(Int32.Parse(moduleID), angleRounded))
         {
             Debug.Log("Control library exited with error");
         }

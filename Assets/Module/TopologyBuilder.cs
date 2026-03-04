@@ -17,11 +17,11 @@ public class TopologyBuilder : MonoBehaviour
 
     [Header("Topology Selection")]
     [Tooltip("Set to true to load from JSON file (for local testing). Set to false to use ControlLibrary.")]
-    public bool useJsonFile = false;
+    public bool useJsonFile = true;
     [Tooltip("When true, angle commands are not sent to native ControlLibrary - use only for local testing without hardware.")]
     public bool skipControlLibraryCalls = false;
     [Tooltip("JSON file name (without .json) in Resources folder. e.g. 'mockData' or 'mockDataSimple'")]
-    public string jsonFileName = "mockData";
+    public string jsonFileName = "mockDataNewConfig";
 
     public static Dictionary<string, GameObject> idToInstance = new();
     public static bool _skipControlLibraryCalls = false;
@@ -114,6 +114,15 @@ public class TopologyBuilder : MonoBehaviour
             case "DC": return ModuleType.DC_MOTOR;
             case "Hub": return ModuleType.SPLITTER;
             case "Battery": return ModuleType.BATTERY;
+            case "Power": return ModuleType.POWER;
+            case "Gripper": return ModuleType.GRIPPER;
+            case "Display": return ModuleType.DISPLAY;
+            case "Distance": return ModuleType.DISTANCE_SENSOR;
+            case "IMU": return ModuleType.IMU;
+            case "Speaker": return ModuleType.SPEAKER;
+            case "Splitter2": return ModuleType.SPLITTER_2;
+            case "Splitter3": return ModuleType.SPLITTER_3;
+            case "Splitter4": return ModuleType.SPLITTER_4;
             default: return ModuleType.SPLITTER;
         }
     }
@@ -177,6 +186,12 @@ public class TopologyBuilder : MonoBehaviour
                         servo = instance.GetComponent<ServoStraightModule>();
                     }
                     servo.InitialSetAngle(module.Degree);
+                }
+                else if (parsedType == ModuleType.GRIPPER)
+                {
+                    var gripper = instance.GetComponent<GripperModule>();
+                    if (gripper != null)
+                        gripper.InitialSetAngle(module.Degree);
                 }
             }
         }

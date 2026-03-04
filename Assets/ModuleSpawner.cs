@@ -5,10 +5,18 @@ using UnityEngine;
 public class ModuleSpawner : MonoBehaviour
 {
     public GameObject batteryModulePrefab;
-    public GameObject hubModulePrefab;
+    public GameObject hubModuleMMMFPrefab;
+    public GameObject hubModuleMMMMPrefab;
+    public GameObject triangleHubMMFPrefab;
+    public GameObject triangleHubMMMPrefab;
     public GameObject dcMotorModulePrefab;
     public GameObject servoBendModulePrefab;
     public GameObject servoStraightModulePrefab;
+    public GameObject gripperModulePrefab;
+    public GameObject displayModulePrefab;
+    public GameObject distanceSensorModulePrefab;
+    public GameObject imuSensorModulePrefab;
+    public GameObject speakerModulePrefab;
 
     public GameObject GetPrefabForType(ModuleType type)
     {
@@ -18,13 +26,29 @@ public class ModuleSpawner : MonoBehaviour
             case ModuleType.BATTERY:
                 return batteryModulePrefab;
             case ModuleType.SPLITTER:
-                return hubModulePrefab;
+                return hubModuleMMMFPrefab;
             case ModuleType.DC_MOTOR:
-                return dcMotorModulePrefab;
+                return dcMotorModulePrefab; // DC module deactivated
             case ModuleType.SERVO_1:
                 return servoBendModulePrefab;
             case ModuleType.SERVO_2:
                 return servoStraightModulePrefab;
+            case ModuleType.GRIPPER:
+                return gripperModulePrefab;
+            case ModuleType.DISPLAY:
+                return displayModulePrefab;
+            case ModuleType.DISTANCE_SENSOR:
+                return distanceSensorModulePrefab;
+            case ModuleType.IMU:
+                return imuSensorModulePrefab;
+            case ModuleType.SPEAKER:
+                return speakerModulePrefab;
+            case ModuleType.SPLITTER_2:
+                return hubModuleMMMMPrefab;
+            case ModuleType.SPLITTER_3:
+                return triangleHubMMFPrefab;
+            case ModuleType.SPLITTER_4:
+                return triangleHubMMMPrefab;
             default:
                 Debug.LogError("Unknown module type: " + type);
                 return null;

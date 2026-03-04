@@ -1,0 +1,80 @@
+{
+    "Modules": [
+      { "Id": "servo1", "Type": "Servo1", "Degree": 34 },
+      { "Id": "servo2", "Type": "Servo1", "Degree": 130 },
+      { "Id": "dc1", "Type": "DC", "Degree": null },
+      { "Id": "dc2", "Type": "DC", "Degree": null },
+      { "Id": "hub1", "Type": "Hub", "Degree": null },
+      { "Id": "hub2", "Type": "Hub", "Degree": null },
+      { "Id": "battery1", "Type": "Battery", "Degree": null },
+      { "Id": "battery2", "Type": "Battery", "Degree": null },
+      { "Id": "servo3", "Type": "Servo2", "Degree": 32 },
+      { "Id": "battery3", "Type": "Battery", "Degree": null }
+    ],
+    "Connections": [
+      {
+        "FromModuleId": "servo1",
+        "ToModuleId": "servo2",
+        "FromSocket": "MaleSocket",
+        "ToSocket": "FemaleSocket",
+        "Orientation": 90
+      },
+      {
+        "FromModuleId": "servo2",
+        "ToModuleId": "dc1",
+        "FromSocket": "MaleSocket",
+        "ToSocket": "FemaleSocket",
+        "Orientation": 180
+      },
+      {
+        "FromModuleId": "hub1",
+        "ToModuleId": "battery1",
+        "FromSocket": "MaleSocket2",
+        "ToSocket": "FemaleSocket",
+        "Orientation": 0
+      },
+      {
+        "FromModuleId": "hub1",
+        "ToModuleId": "battery2",
+        "FromSocket": "MaleSocket3",
+        "ToSocket": "FemaleSocket",
+        "Orientation": 90
+      },
+      {
+        "FromModuleId": "hub1",
+        "ToModuleId": "dc2",
+        "FromSocket": "MaleSocket1",
+        "ToSocket": "FemaleSocket",
+        "Orientation": 0
+      },
+      {
+        "FromModuleId": "servo1",
+        "ToModuleId": "battery1",
+        "FromSocket": "BodySocket",
+        "ToSocket": "MaleSocket",
+        "Orientation": 0
+      },
+      {
+        "FromModuleId": "servo3",
+        "ToModuleId": "battery3",
+        "FromSocket": "MaleSocket",
+        "ToSocket": "FemaleSocket",
+        "Orientation": 90
+      },
+      {
+        "FromModuleId": "hub1",
+        "ToModuleId": "battery3",
+        "FromSocket": "FemaleSocket",
+        "ToSocket": "MaleSocket",
+        "Orientation": 0
+      },
+      {
+        "FromModuleId": "servo3",
+        "ToModuleId": "hub2",
+        "FromSocket": "FemaleSocket",
+        "ToSocket": "MaleSocket1",
+        "Orientation": 90
+      }
+    ]
+  }
+  

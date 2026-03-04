@@ -6,31 +6,13 @@ using UnityEngine.UI;
 
 public class DCMotorModule : ModuleBase
 {
-    private static DCMotorControlPanel motorControlPanel;
+    private static ControlPanel motorControlPanel;
     public Transform motorShaft;
 
     public float rotationSpeed = 90f;
     private float targetPosition = 0f;
-
-    public void Start()
-    {
-        if (motorControlPanel == null)
-        {
-            motorControlPanel = FindObjectOfType<DCMotorControlPanel>(true);
-        }
-    }
-
-    public override void OnSelect()
-    {
-        if (motorControlPanel != null)
-            motorControlPanel.Initialize(this);
-    }
-
-    public override void DeSelect()
-    {
-        if (motorControlPanel != null)
-            motorControlPanel.HidePanel();
-    }
+    public override string moduleType => "DC";
+    public override string moduleName => "DC Module";
 
     public void Rotate(float degrees, int direction)
     {

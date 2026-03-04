@@ -2,6 +2,8 @@ using UnityEngine;
 public class ServoStraightModule : ServoMotorModule
 {
     public override string servoType => "Servo2";
+    public override string moduleType => "Servo2";
+    public override string moduleName => "Servo Straight Module";
 
     // public float currentAngle = 90f;
 
@@ -31,7 +33,7 @@ public class ServoStraightModule : ServoMotorModule
     {
         currentAngle = Mathf.Clamp(angle, 0f, 180f);
         lastSentAngle = currentAngle;
-        armPivot.localRotation = Quaternion.Euler(currentAngle, 0f, 0f);
+        MoveArmPivot(currentAngle);
     }
 
     // public void SetHighlight(bool enabled)

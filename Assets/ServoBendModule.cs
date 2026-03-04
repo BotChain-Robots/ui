@@ -2,6 +2,8 @@ using UnityEngine;
 public class ServoBendModule : ServoMotorModule
 {
     public override string servoType => "Servo1";
+    public override string moduleType => "Servo1";
+    public override string moduleName => "Servo Bend Module";
 
     void Start()
     {

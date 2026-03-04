@@ -272,7 +272,7 @@ public class InverseKinematicsController : MonoBehaviour
             ModuleBase module = child.GetComponent<ModuleBase>();
             if (module != null)
             {
-                BatteryModule battery = child.GetComponent<BatteryModule>();
+                PowerModule battery = child.GetComponent<PowerModule>();
                 HubModule hub = child.GetComponent<HubModule>();
                 
                 if (battery != null || hub != null)
