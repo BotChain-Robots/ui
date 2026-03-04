@@ -33,7 +33,7 @@ public class ServoStraightModule : ServoMotorModule
     {
         currentAngle = Mathf.Clamp(angle, 0f, 180f);
         lastSentAngle = currentAngle;
-        armPivot.localRotation = Quaternion.Euler(currentAngle, 0f, 0f);
+        MoveArmPivot(currentAngle);
     }
 
     // public void SetHighlight(bool enabled)

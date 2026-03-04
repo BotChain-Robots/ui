@@ -114,6 +114,7 @@ public class TopologyBuilder : MonoBehaviour
             case "DC": return ModuleType.DC_MOTOR;
             case "Hub": return ModuleType.SPLITTER;
             case "Battery": return ModuleType.BATTERY;
+            case "Power": return ModuleType.POWER;
             case "Gripper": return ModuleType.GRIPPER;
             case "Display": return ModuleType.DISPLAY;
             case "Distance": return ModuleType.DISTANCE_SENSOR;
@@ -185,6 +186,12 @@ public class TopologyBuilder : MonoBehaviour
                         servo = instance.GetComponent<ServoStraightModule>();
                     }
                     servo.InitialSetAngle(module.Degree);
+                }
+                else if (parsedType == ModuleType.GRIPPER)
+                {
+                    var gripper = instance.GetComponent<GripperModule>();
+                    if (gripper != null)
+                        gripper.InitialSetAngle(module.Degree);
                 }
             }
         }
