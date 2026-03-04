@@ -77,9 +77,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4735e9a5ae30490bba1dc35e4603bce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  objectDetected: 0
-  distanceMeters: 0
-  infoLines: []
+  infoLines:
+  - 
+  - 
+  pollHz: 10
 --- !u!1 &5041994602013865196
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class DisplayModule : ModuleBase
 {
@@ -17,5 +18,6 @@ public class DisplayModule : ModuleBase
         // Replace with actual hardware communication logic
         Debug.Log($"[DisplayModule] Sending display text: {text}");
         // Example: ControlLibrary.send_display_text(Int32.Parse(moduleID), text);
+        ControlLibrary.send_string_control(Int32.Parse(moduleID), text);
     }
 }

@@ -20,6 +20,12 @@ public class ControlLibrary : MonoBehaviour
     private static extern IntPtr get_configuration(out int module_id); // the data this points to will be invalidated when called again
 
     [DllImport("libc_control")]
+    public static extern int send_string_control(int module_id, string s);
+
+    [DllImport("libc_control")]
+    public static extern double get_distance_control(int module_id);
+
+    [DllImport("libc_control")]
     public static extern bool control_sentry_init(
         string dsn,
         string environment,
