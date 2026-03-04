@@ -2,6 +2,8 @@ using UnityEngine;
 public class ServoStraightModule : ServoMotorModule
 {
     public override string servoType => "Servo2";
+    public override string moduleType => "Servo2";
+    public override string moduleName => "Servo Straight Module";
 
     // public float currentAngle = 90f;
 

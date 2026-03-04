@@ -245,18 +245,7 @@ public class LiveViewModulePanel : MonoBehaviour
 
     string GetModuleTypeName(ModuleBase m)
     {
-        if (m is ServoBendModule) return "Servo Bend";
-        if (m is ServoStraightModule) return "Servo Straight";
-        if (m is DCMotorModule) return "DC";
-        if (m is DisplayModule) return "Display";
-        if (m is HubModule) return "Hub";
-        if (m is PowerModule) return "Power";
-        if (m is GripperModule) return "Gripper";
-        if (m is DisplayModule) return "Display";
-        if (m is DistanceSensorModule) return "Distance Sensor";
-        if (m is IMUSensorModule) return "IMU Sensor";
-        if (m is SpeakerModule) return "Speaker";
-        return m.GetType().Name;
+        return m != null ? m.moduleName : "Unknown";
     }
 
     string GetDegreeInfo(ModuleBase m)

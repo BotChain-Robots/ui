@@ -11,6 +11,8 @@ public class DCMotorModule : ModuleBase
 
     public float rotationSpeed = 90f;
     private float targetPosition = 0f;
+    public override string moduleType => "DC";
+    public override string moduleName => "DC Module";
 
     public void Rotate(float degrees, int direction)
     {

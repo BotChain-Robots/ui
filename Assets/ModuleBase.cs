@@ -5,6 +5,8 @@ public abstract class ModuleBase : MonoBehaviour
 {
     public string moduleID { get; set; } = "";
     public double angle { get; set; } = 0; // also optional, for Servo/DC angle
+    public abstract string moduleType { get; }
+    public abstract string moduleName { get; }
 
     public void SendToControlLibrary(string moduleType, float currentAngle)
     {
@@ -18,7 +20,7 @@ public abstract class ModuleBase : MonoBehaviour
                 TargetAngle = currentAngle
             });
         }
-        else if(moduleType == "DC")
+        else if (moduleType == "DC")
         {
             string direction = "Forwards";
             if (currentAngle < 0)

@@ -10,6 +10,8 @@ public class IMUSensorModule : ModuleBase
 
     [Header("UI Lines")]
     public string[] infoLines = new string[0];
+    public override string moduleType => "IMU";
+    public override string moduleName => "IMU Sensor Module";
 
     void Update()
     {

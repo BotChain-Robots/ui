@@ -8644,7 +8644,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   batteryModulePrefab: {fileID: 5681477249120589453, guid: 2d0654bf410fb459196f824c861fff6b, type: 3}
-  hubModulePrefab: {fileID: 2038062744777034846, guid: 2e29377717f1046f2b6b15656dd58cc2, type: 3}
+  hubModuleMMMFPrefab: {fileID: 2038062744777034846, guid: 2e29377717f1046f2b6b15656dd58cc2, type: 3}
+  hubModuleMMMMPrefab: {fileID: 6210873077440843193, guid: 56513ce62d2504919b218e5c1c59b7fe, type: 3}
+  triangleHubMMFPrefab: {fileID: 8675105343656750386, guid: 2748c7e04600640029ca885671ec6d66, type: 3}
+  triangleHubMMMPrefab: {fileID: 1359582472002982618, guid: b87552d1aa0cd4b5c96106c3dffdc572, type: 3}
   dcMotorModulePrefab: {fileID: 7364692261245862742, guid: 6ffe98828f23843f4814a5dc44baaf85, type: 3}
   servoBendModulePrefab: {fileID: 2587764185522029205, guid: 5c6ff9c85cb0b4e54a56a4714e2245e7, type: 3}
   servoStraightModulePrefab: {fileID: 6867075298355049526, guid: 3059d52069ecc4a25b965d348837f129, type: 3}

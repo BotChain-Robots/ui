@@ -11,6 +11,8 @@ public class GripperModule : ServoMotorModule
     public float maxPincerDistance = 0.02f;
 
     public override string servoType => "Gripper";
+    public override string moduleType => "Gripper";
+    public override string moduleName => "Gripper Module";
 
     // Cache the original local positions so we don't stomp Y/Z (or any authored offsets).
     private Vector3 _leftStartLocalPos;

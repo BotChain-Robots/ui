@@ -3,6 +3,8 @@ using UnityEngine;
 public class DisplayModule : ModuleBase
 {
     public string displayText = "";
+    public override string moduleType => "Display";
+    public override string moduleName => "Display Module";
 
     public void SetDisplayText(string text)
     {

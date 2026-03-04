@@ -8,6 +8,8 @@ public class SpeakerModule : ModuleBase
     public string audioFilePath = "";
     public string audioFileName = "";
     public byte[] audioBytes;
+    public override string moduleType => "Speaker";
+    public override string moduleName => "Speaker Module";
 
     // Called by UI after user picks a file
     public void SetAudioFile(string path)

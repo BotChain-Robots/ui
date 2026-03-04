@@ -5,7 +5,10 @@ using UnityEngine;
 public class ModuleSpawner : MonoBehaviour
 {
     public GameObject batteryModulePrefab;
-    public GameObject hubModulePrefab;
+    public GameObject hubModuleMMMFPrefab;
+    public GameObject hubModuleMMMMPrefab;
+    public GameObject triangleHubMMFPrefab;
+    public GameObject triangleHubMMMPrefab;
     public GameObject dcMotorModulePrefab;
     public GameObject servoBendModulePrefab;
     public GameObject servoStraightModulePrefab;
@@ -23,7 +26,7 @@ public class ModuleSpawner : MonoBehaviour
             case ModuleType.BATTERY:
                 return batteryModulePrefab;
             case ModuleType.SPLITTER:
-                return hubModulePrefab;
+                return hubModuleMMMFPrefab;
             case ModuleType.DC_MOTOR:
                 return dcMotorModulePrefab;
             case ModuleType.SERVO_1:
@@ -40,6 +43,12 @@ public class ModuleSpawner : MonoBehaviour
                 return imuSensorModulePrefab;
             case ModuleType.SPEAKER:
                 return speakerModulePrefab;
+            case ModuleType.SPLITTER_2:
+                return hubModuleMMMMPrefab;
+            case ModuleType.SPLITTER_3:
+                return triangleHubMMFPrefab;
+            case ModuleType.SPLITTER_4:
+                return triangleHubMMMPrefab;
             default:
                 Debug.LogError("Unknown module type: " + type);
                 return null;

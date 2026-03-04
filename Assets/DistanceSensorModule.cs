@@ -3,6 +3,8 @@ public class DistanceSensorModule : ModuleBase
     public bool objectDetected;
     public float distanceMeters;
     public string[] infoLines = new string[0];
+    public override string moduleType => "Distance";
+    public override string moduleName => "Distance Sensor Module";
 
     void Update()
     {
