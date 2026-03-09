@@ -1,11 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-using TMPro;
-
 public class SelectedModuleLabelController : MonoBehaviour
 {
-    public TextMeshProUGUI selectedModuleText;
+    public Text selectedModuleText;
 
     void Update()
     {

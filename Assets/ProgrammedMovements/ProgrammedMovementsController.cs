@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using TMPro;
+
 
 /// <summary>
 /// Controller for ProgrammedMovements view: timeline banner at bottom.
@@ -271,11 +271,12 @@ public class ProgrammedMovementsController : MonoBehaviour
     {
         var go = new GameObject();
         go.transform.SetParent(parent, false);
-        var tmp = go.AddComponent<TextMeshProUGUI>();
-        tmp.text = text;
-        tmp.fontSize = fontSize;
-        tmp.color = Color.white;
-        tmp.alignment = TextAlignmentOptions.Center;
+        var txt = go.AddComponent<Text>();
+        txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        txt.text = text;
+        txt.fontSize = fontSize;
+        txt.color = Color.white;
+        txt.alignment = TextAnchor.MiddleCenter;
         go.AddComponent<RectTransform>();
         return go;
     }
@@ -373,7 +374,7 @@ public class ProgrammedMovementsController : MonoBehaviour
 
         var mod = (ModuleBase)block.moduleServo ?? block.moduleDC;
         var moduleLabel = config.Find("ConfigRow1/ModuleLabel") ?? config.Find("ModuleLabel");
-        var ml = moduleLabel?.GetComponent<TextMeshProUGUI>();
+        var ml = moduleLabel?.GetComponent<Text>();
         if (ml != null) ml.text = mod != null ? GetModuleTypeName(mod) : "None";
 
         var row2 = config.Find("ConfigRow2");
@@ -389,18 +390,18 @@ public class ProgrammedMovementsController : MonoBehaviour
 
         if (!isDC)
         {
-            var ai = angleInput?.GetComponent<TMP_InputField>();
+            var ai = angleInput?.GetComponent<InputField>();
             if (ai != null) ai.text = block.targetAngle.ToString("F0");
         }
         else
         {
             if (dirButtons != null) UpdateDirectionButtonsVisual(dirButtons, block.dcDirection);
-            var dcd = dcDegreesInput?.GetComponent<TMP_InputField>();
+            var dcd = dcDegreesInput?.GetComponent<InputField>();
             if (dcd != null) dcd.text = block.targetAngle.ToString("F0");
         }
 
         var secondInput = config.Find("ConfigRow2/SecondInput") ?? config.Find("SecondInput");
-        var si = secondInput?.GetComponent<TMP_InputField>();
+        var si = secondInput?.GetComponent<InputField>();
         if (si != null) si.text = block.second.ToString();
     }
 
@@ -408,7 +409,7 @@ public class ProgrammedMovementsController : MonoBehaviour
     {
         var config = _configView?.Find("ConfigContent");
         var moduleLabel = config?.Find("ConfigRow1/ModuleLabel") ?? config?.Find("ModuleLabel");
-        var ml = moduleLabel?.GetComponent<TextMeshProUGUI>();
+        var ml = moduleLabel?.GetComponent<Text>();
         if (ml != null) ml.text = text;
     }
 
@@ -496,18 +497,18 @@ public class ProgrammedMovementsController : MonoBehaviour
         if (block.moduleDC == null)
         {
             var angleInput = config.Find("ConfigRow2/AngleSection/AngleInput") ?? config.Find("ConfigRow2/AngleInput") ?? config.Find("AngleInput");
-            if (angleInput != null && float.TryParse(angleInput.GetComponent<TMP_InputField>()?.text, out float angle))
+            if (angleInput != null && float.TryParse(angleInput.GetComponent<InputField>()?.text, out float angle))
                 block.targetAngle = Mathf.Clamp(angle, 0f, 180f);
         }
         else
         {
             var dcDegreesInput = directionSection?.Find("DCDegreesInput");
-            if (dcDegreesInput != null && float.TryParse(dcDegreesInput.GetComponent<TMP_InputField>()?.text, out float degrees))
+            if (dcDegreesInput != null && float.TryParse(dcDegreesInput.GetComponent<InputField>()?.text, out float degrees))
                 block.targetAngle = Mathf.Clamp(degrees, 1f, 3600f);
         }
 
         var secondInput = config.Find("ConfigRow2/SecondInput") ?? config.Find("SecondInput");
-        if (secondInput != null && int.TryParse(secondInput.GetComponent<TMP_InputField>()?.text, out int sec))
+        if (secondInput != null && int.TryParse(secondInput.GetComponent<InputField>()?.text, out int sec))
         {
             UnindexBlock(_editingBlock);
             _editingBlock.second = Mathf.Clamp(sec, 0, TimelineDurationSeconds - 1);
@@ -522,14 +523,16 @@ public class ProgrammedMovementsController : MonoBehaviour
         go.transform.SetParent(parent, false);
         var img = go.AddComponent<Image>();
         img.color = new Color(0.2f, 0.2f, 0.25f, 1f);
-        var input = go.AddComponent<TMP_InputField>();
+        var input = go.AddComponent<InputField>();
         var textGO = new GameObject("Text");
         textGO.transform.SetParent(go.transform, false);
-        var text = textGO.AddComponent<TextMeshProUGUI>();
+        var text = textGO.AddComponent<Text>();
+        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         text.text = initial;
         text.fontSize = 11;
         text.color = Color.white;
-        text.alignment = TextAlignmentOptions.Center;
+        text.alignment = TextAnchor.MiddleCenter;
+        text.horizontalOverflow = HorizontalWrapMode.Overflow;
         var textRect = textGO.GetComponent<RectTransform>();
         textRect.anchorMin = Vector2.zero;
         textRect.anchorMax = Vector2.one;
@@ -615,8 +618,8 @@ public class ProgrammedMovementsController : MonoBehaviour
         if (runButton != null)
         {
             runButton.interactable = true;
-            var tmp = runButton.GetComponentInChildren<TextMeshProUGUI>();
-            if (tmp != null) tmp.text = _isRunning ? "Running" : "Run";
+            var txt = runButton.GetComponentInChildren<Text>();
+            if (txt != null) txt.text = _isRunning ? "Running" : "Run";
         }
     }
 

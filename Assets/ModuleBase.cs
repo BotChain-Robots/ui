@@ -8,6 +8,8 @@ public abstract class ModuleBase : MonoBehaviour
     public abstract string moduleType { get; }
     public abstract string moduleName { get; }
 
+    private static bool _nativeLibFailed = false;
+
     public void SendToControlLibrary(string moduleType, float currentAngle)
     {
         int angleRounded = Mathf.RoundToInt(currentAngle);
@@ -37,13 +39,31 @@ public abstract class ModuleBase : MonoBehaviour
             });
         }
         Debug.Log($"[ControlLibrary] Sending command: {json}");
-        if (TopologyBuilder.SkipControlLibraryCalls)
+        if (TopologyBuilder.SkipControlLibraryCalls || _nativeLibFailed)
         {
             return;
         }
-        if (0 != ControlLibrary.send_angle_control(Int32.Parse(moduleID), angleRounded))
+        try
         {
-            Debug.Log("Control library exited with error");
+            if (0 != ControlLibrary.send_angle_control(Int32.Parse(moduleID), angleRounded))
+            {
+                Debug.Log("Control library exited with error");
+            }
+        }
+        catch (DllNotFoundException)
+        {
+            Debug.LogWarning("[ControlLibrary] Native library libc_control not found. Disabling further native calls.");
+            _nativeLibFailed = true;
+        }
+        catch (EntryPointNotFoundException)
+        {
+            Debug.LogWarning("[ControlLibrary] Entry point not found in libc_control. Disabling further native calls.");
+            _nativeLibFailed = true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[ControlLibrary] Native call failed: {e.Message}");
+            _nativeLibFailed = true;
         }
     }
 }

@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 /// <summary>
 /// Top banner with three buttons (1=Live View, 2=Inverse Kinematics, 3=Programmed Movements).
@@ -163,13 +162,14 @@ public class ViewBannerUI : MonoBehaviour
         textRect.offsetMin = new Vector2(6, 4);
         textRect.offsetMax = new Vector2(-6, -4);
 
-        var tmp = textGo.AddComponent<TextMeshProUGUI>();
-        tmp.text = label;
-        tmp.fontSize = 18;
-        tmp.fontStyle = FontStyles.Bold;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = buttonTextColor;
-        tmp.enableWordWrapping = true;
+        var txt = textGo.AddComponent<Text>();
+        txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        txt.text = label;
+        txt.fontSize = 18;
+        txt.fontStyle = FontStyle.Bold;
+        txt.alignment = TextAnchor.MiddleCenter;
+        txt.color = buttonTextColor;
+        txt.horizontalOverflow = HorizontalWrapMode.Wrap;
 
         return image;
     }

@@ -1,17 +1,17 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using TMPro;
+
 
 public class LiveViewModulePanel : MonoBehaviour
 {
     [Header("Module Info")]
-    public TextMeshProUGUI moduleInfoText;
+    public Text moduleInfoText;
 
     [Header("Servo Control")]
     public GameObject servoControlSection;
     public Slider servoAngleSlider;
-    public TextMeshProUGUI servoAngleLabel;
+    public Text servoAngleLabel;
 
     [Header("DC + Display Control (Reused)")]
     public GameObject moduleControlSection;
@@ -24,7 +24,7 @@ public class LiveViewModulePanel : MonoBehaviour
     private bool _sliderDragging;
     private ControlPanel panel;
     private GameObject sensorTextContainer;
-    private readonly System.Collections.Generic.List<TextMeshProUGUI> sensorTextLines = new System.Collections.Generic.List<TextMeshProUGUI>();
+    private readonly System.Collections.Generic.List<Text> sensorTextLines = new System.Collections.Generic.List<Text>();
 
     void Start()
     {
@@ -170,10 +170,9 @@ public class LiveViewModulePanel : MonoBehaviour
         sensorTextContainer = new GameObject("SensorTextContainer");
         sensorTextContainer.transform.SetParent(parent, false);
 
-        var src = moduleInfoText.rectTransform;
+        var src = moduleInfoText.GetComponent<RectTransform>();
         var rt = sensorTextContainer.AddComponent<RectTransform>();
 
-        // Place under the moduleInfoText
         rt.anchorMin = src.anchorMin;
         rt.anchorMax = src.anchorMax;
         rt.pivot = src.pivot;
@@ -198,24 +197,16 @@ public class LiveViewModulePanel : MonoBehaviour
             var go = new GameObject($"SensorLine{sensorTextLines.Count}");
             go.transform.SetParent(sensorTextContainer.transform, false);
 
-            var tmp = go.AddComponent<TextMeshProUGUI>();
+            var txt = go.AddComponent<Text>();
+            txt.font = moduleInfoText.font;
+            txt.fontStyle = FontStyle.Bold;
+            txt.fontSize = 22;
+            txt.color = Color.white;
+            txt.alignment = TextAnchor.UpperLeft;
+            txt.horizontalOverflow = HorizontalWrapMode.Wrap;
+            txt.verticalOverflow = VerticalWrapMode.Overflow;
 
-            // Match your UI font + material
-            tmp.font = moduleInfoText.font;
-            tmp.fontSharedMaterial = moduleInfoText.fontSharedMaterial;
-
-            // Your requested style (like screenshot)
-            tmp.fontStyle = FontStyles.Bold;
-            tmp.fontSize = 22f;
-            tmp.enableAutoSizing = false;
-            tmp.color = Color.white;
-            tmp.enableVertexGradient = false;
-
-            tmp.alignment = TextAlignmentOptions.TopLeft;
-            tmp.enableWordWrapping = true;
-
-            // Layout: stacked lines
-            var rt = tmp.rectTransform;
+            var rt = go.GetComponent<RectTransform>();
             rt.anchorMin = new Vector2(0f, 1f);
             rt.anchorMax = new Vector2(1f, 1f);
             rt.pivot = new Vector2(0f, 1f);
@@ -225,10 +216,9 @@ public class LiveViewModulePanel : MonoBehaviour
             rt.anchoredPosition = new Vector2(0f, y);
             rt.sizeDelta = new Vector2(0f, lineH);
 
-            sensorTextLines.Add(tmp);
+            sensorTextLines.Add(txt);
         }
 
-        // Hide extras
         for (int i = 0; i < sensorTextLines.Count; i++)
             sensorTextLines[i].gameObject.SetActive(i < count);
     }

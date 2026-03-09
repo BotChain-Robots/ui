@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
+using UnityEngine.EventSystems;
 
 public class ServoModuleUISliderController : MonoBehaviour
 {
     public Slider angleSlider;
-    public TextMeshProUGUI selectedModuleText;
+    public Text selectedModuleText;
 
     private bool isDragging = false;
 
@@ -14,27 +14,38 @@ public class ServoModuleUISliderController : MonoBehaviour
         if (angleSlider == null)
             angleSlider = GetComponentInChildren<Slider>();
 
+        if (angleSlider == null) return;
+
         angleSlider.minValue = 0f;
         angleSlider.maxValue = 180f;
 
         angleSlider.onValueChanged.AddListener(OnSliderChanged);
+
+        var et = angleSlider.GetComponent<EventTrigger>() ?? angleSlider.gameObject.AddComponent<EventTrigger>();
+        var begin = new EventTrigger.Entry { eventID = EventTriggerType.BeginDrag };
+        begin.callback.AddListener(_ => isDragging = true);
+        et.triggers.Add(begin);
+
+        var end = new EventTrigger.Entry { eventID = EventTriggerType.EndDrag };
+        end.callback.AddListener(_ => isDragging = false);
+        et.triggers.Add(end);
     }
 
     void Update()
     {
+        if (selectedModuleText == null || angleSlider == null) return;
+
         var selected = ServoMotorModule.selectedModule;
 
         if (selected != null)
         {
             selectedModuleText.text = $"Selected: {selected.name} | Angle: {selected.currentAngle:F1}°";
 
-            // Sync slider with angle if not dragging
             if (!isDragging)
             {
-                angleSlider.value = selected.currentAngle;
+                angleSlider.SetValueWithoutNotify(selected.currentAngle);
             }
 
-            // Make slider visible and interactable
             if (!angleSlider.gameObject.activeSelf)
             {
                 angleSlider.gameObject.SetActive(true);
@@ -44,7 +55,6 @@ public class ServoModuleUISliderController : MonoBehaviour
         {
             selectedModuleText.text = "No module selected";
 
-            // Hide slider when no module selected
             if (angleSlider.gameObject.activeSelf)
             {
                 angleSlider.gameObject.SetActive(false);
@@ -58,10 +68,5 @@ public class ServoModuleUISliderController : MonoBehaviour
         {
             ServoMotorModule.selectedModule.SetAngleAndSendControlLibrary(value);
         }
-    }
-
-    public void OnEndDrag()
-    {
-        isDragging = false;
     }
 }

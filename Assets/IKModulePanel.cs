@@ -1,13 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 /// <summary>
 /// IK-mode side panel: shows fixed-module hint. Text is set in the scene.
 /// </summary>
 public class IKModulePanel : MonoBehaviour
 {
-    public TextMeshProUGUI moduleInfoText;
+    public Text moduleInfoText;
 
     [Header("Panel Layout")]
     public float panelWidth = 260f;

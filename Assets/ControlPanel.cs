@@ -1,12 +1,11 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ControlPanel : MonoBehaviour
 {
     [Header("Core UI (assign in Inspector)")]
-    public TMP_InputField inputField;
-    public TMP_Dropdown directionDropdown;
+    public InputField inputField;
+    public Dropdown directionDropdown;
     public Button button; // existing Send/Rotate button in hierarchy
 
     private enum Mode { None, DC, Display, Speaker }
@@ -20,17 +19,15 @@ public class ControlPanel : MonoBehaviour
     private int _savedDirectionIndex = 0;
     private string _savedDisplayInput = "";
 
-    // Found automatically (no hierarchy edits)
-    private TextMeshProUGUI _caption;     // child "DegreesCaption"
-    private TextMeshProUGUI _buttonText;  // child "RotateButton/Text (TMP)"
+    private Text _caption;     // child "DegreesCaption"
+    private Text _buttonText;  // child "RotateButton/Text (TMP)"
     private GameObject _directionCaptionGO;
     private GameObject _directionDropdownGO;
 
-    // Created in code (Speaker mode only)
     private Button _uploadButton;
-    private TextMeshProUGUI _uploadButtonText;
+    private Text _uploadButtonText;
     private Button _playButton;
-    private TextMeshProUGUI _playButtonText;
+    private Text _playButtonText;
 
     private void Awake()
     {
@@ -91,10 +88,10 @@ public class ControlPanel : MonoBehaviour
     private void CacheUIFromHierarchy()
     {
         var captionT = transform.Find("DegreesCaption");
-        if (captionT != null) _caption = captionT.GetComponent<TextMeshProUGUI>();
+        if (captionT != null) _caption = captionT.GetComponent<Text>();
 
         var buttonTextT = transform.Find("RotateButton/Text (TMP)");
-        if (buttonTextT != null) _buttonText = buttonTextT.GetComponent<TextMeshProUGUI>();
+        if (buttonTextT != null) _buttonText = buttonTextT.GetComponent<Text>();
 
         var dirCaptionT = transform.Find("DirectionCaption");
         if (dirCaptionT != null) _directionCaptionGO = dirCaptionT.gameObject;
@@ -253,20 +250,17 @@ public class ControlPanel : MonoBehaviour
         }
     }
 
-    private void CopyTMPStyle(TextMeshProUGUI source, TextMeshProUGUI target)
+    private void CopyTextStyle(Text source, Text target)
     {
         if (source == null || target == null) return;
 
         target.font = source.font;
-        target.fontSharedMaterial = source.fontSharedMaterial;
         target.fontStyle = source.fontStyle;
         target.fontSize = source.fontSize;
-        target.enableAutoSizing = source.enableAutoSizing;
         target.color = source.color;
-        target.enableVertexGradient = source.enableVertexGradient;
         target.alignment = source.alignment;
-        target.enableWordWrapping = source.enableWordWrapping;
-        target.richText = source.richText;
+        target.horizontalOverflow = source.horizontalOverflow;
+        target.verticalOverflow = source.verticalOverflow;
     }
 
     // -------------------------
@@ -289,14 +283,13 @@ public class ControlPanel : MonoBehaviour
         // Copy Send button look
         CopyButtonStyle(button, _uploadButton);
 
-        var textGo = new GameObject("Text (TMP)");
+        var textGo = new GameObject("Text");
         textGo.transform.SetParent(go.transform, false);
-        _uploadButtonText = textGo.AddComponent<TextMeshProUGUI>();
+        _uploadButtonText = textGo.AddComponent<Text>();
         _uploadButtonText.text = "Upload Audio";
 
-        // Copy Send text look
-        CopyTMPStyle(_buttonText, _uploadButtonText);
-        _uploadButtonText.alignment = TextAlignmentOptions.Center;
+        CopyTextStyle(_buttonText, _uploadButtonText);
+        _uploadButtonText.alignment = TextAnchor.MiddleCenter;
 
         // Layout: above Play
         var rt = go.GetComponent<RectTransform>();
@@ -353,14 +346,13 @@ public class ControlPanel : MonoBehaviour
         // Copy Send button look
         CopyButtonStyle(button, _playButton);
 
-        var textGo = new GameObject("Text (TMP)");
+        var textGo = new GameObject("Text");
         textGo.transform.SetParent(go.transform, false);
-        _playButtonText = textGo.AddComponent<TextMeshProUGUI>();
+        _playButtonText = textGo.AddComponent<Text>();
         _playButtonText.text = "Play Audio";
 
-        // Copy Send text look
-        CopyTMPStyle(_buttonText, _playButtonText);
-        _playButtonText.alignment = TextAlignmentOptions.Center;
+        CopyTextStyle(_buttonText, _playButtonText);
+        _playButtonText.alignment = TextAnchor.MiddleCenter;
 
         // Layout: between Upload and Send
         var rt = go.GetComponent<RectTransform>();

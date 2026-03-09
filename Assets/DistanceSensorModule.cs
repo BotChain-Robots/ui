@@ -30,17 +30,12 @@ public class DistanceSensorModule : ModuleBase
 
         try
         {
-            // Control library call
             double distance = ControlLibrary.get_distance_control(id);
-
             infoLines[1] = $"Distance: {distance:F0} mm";
         }
         catch (Exception e)
         {
-            // SHOW THE PROBLEM ON SCREEN (works in release builds)
             infoLines[1] = $"EXCEPTION: {e.GetType().Name}: {e.Message}";
-
-            // Also log to Player.log (works in builds)
             Debug.LogException(e);
         }
     }

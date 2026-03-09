@@ -1,12 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class AngleControllerSlider : MonoBehaviour
 {
     public GameObject angleUI;
     public Slider angleSlider;
-    public TextMeshProUGUI angleLabel;
+    public Text angleLabel;
 
     private Transform currentCap;
 

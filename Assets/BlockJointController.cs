@@ -1,12 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class BlockJointController : MonoBehaviour
 {
     public Transform rotatingCap;
     public Slider angleSlider;
-    public TextMeshProUGUI angleLabel;
+    public Text angleLabel;
 
     private float currentAngle = 0f;
 

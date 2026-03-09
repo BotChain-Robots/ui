@@ -24,7 +24,7 @@ public class TopologyBuilder : MonoBehaviour
     public string jsonFileName = "mockDataNewConfig";
 
     public static Dictionary<string, GameObject> idToInstance = new();
-    public static bool _skipControlLibraryCalls = false;
+    public static bool _skipControlLibraryCalls = true;
 
     public static bool SkipControlLibraryCalls => _skipControlLibraryCalls;
 
@@ -58,7 +58,7 @@ public class TopologyBuilder : MonoBehaviour
                     graph.Connections.Add(new Connection { FromModuleId = fromId, ToModuleId = toId, FromSocket = c.FromSocket ?? "MaleSocket", ToSocket = c.ToSocket ?? "FemaleSocket", Orientation = o });
                 }
             Debug.Log($"[TopologyBuilder] Built from JSON: {jsonFileName}");
-            _skipControlLibraryCalls = skipControlLibraryCalls;
+            _skipControlLibraryCalls = true;
         }
         else
         {
