@@ -91,7 +91,13 @@ public class TopologyBuilder : MonoBehaviour
                     graph.Connections.Add(new Connection
                     {
                         FromModuleId = connection.FromModuleId,
-                        FromSocket = idToType[connection.FromModuleId] == ModuleType.SPLITTER ? "MaleSocket" + (connection.FromSocket == 0 ? "" : connection.FromSocket) : "MaleSocket",
+                        FromSocket =
+                        idToType[connection.FromModuleId] == ModuleType.SPLITTER ||
+                        idToType[connection.FromModuleId] == ModuleType.SPLITTER_2 ||
+                        idToType[connection.FromModuleId] == ModuleType.SPLITTER_3 ||
+                        idToType[connection.FromModuleId] == ModuleType.SPLITTER_4
+                            ? "MaleSocket" + (connection.FromSocket == 0 ? "" : connection.FromSocket)
+                            : "MaleSocket",
                         ToModuleId = connection.ToModuleId,
                         ToSocket = "FemaleSocket",
                         Orientation = connection.Orientation
