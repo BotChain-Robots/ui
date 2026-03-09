@@ -2016,9 +2016,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawner: {fileID: 2021810911}
-  useJsonFile: 1
+  useJsonFile: 0
   skipControlLibraryCalls: 0
-  jsonFileName: mockDataWithDC
+  jsonFileName: mockData
 --- !u!4 &387671720
 Transform:
   m_ObjectHideFlags: 0
