@@ -45,9 +45,11 @@ public abstract class ModuleBase : MonoBehaviour
         }
         try
         {
-            if (0 != ControlLibrary.send_angle_control(Int32.Parse(moduleID), angleRounded))
+            int result = ControlLibrary.send_angle_control(Int32.Parse(moduleID), angleRounded);
+            Debug.Log($"[ControlLibrary] send_angle_control(moduleId={moduleID}, angle={angleRounded}) returned {result}");
+            if (result != 0)
             {
-                Debug.Log("Control library exited with error");
+                Debug.LogWarning($"[ControlLibrary] send_angle_control returned error code: {result}");
             }
         }
         catch (DllNotFoundException)

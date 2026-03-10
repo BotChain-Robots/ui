@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -11,7 +12,7 @@ using UnityEngine.EventSystems;
 /// </summary>
 public class ProgrammedMovementsController : MonoBehaviour
 {
-    public const int TracksCount = 3;
+    public const int TracksCount = 4;
     public const int TimelineDurationSeconds = 10;
     public static readonly Color HighlightBlue = new Color(0.2f, 0.5f, 1f, 1f);
 
@@ -19,6 +20,10 @@ public class ProgrammedMovementsController : MonoBehaviour
     public Camera mainCamera;
     public RectTransform timelineRoot;
     public Button runButton;
+    public Button saveButton;
+    public Button loadButton;
+    public GameObject filePickerPanel;
+    public RectTransform filePickerContent;
 
     private RectTransform _bannerRoot;
     private Transform _timelineView;
@@ -45,6 +50,7 @@ public class ProgrammedMovementsController : MonoBehaviour
         }
         EnsureTimelineViewShown();
         WireUpButtons();
+        WireSaveLoadButtons();
         RefreshRunButton();
         // Force layout rebuild so block positions align with timeline after view switch
         Canvas.ForceUpdateCanvases();
@@ -94,6 +100,18 @@ public class ProgrammedMovementsController : MonoBehaviour
                 if (runGO != null) runButton = runGO.GetComponent<Button>();
             }
         }
+    }
+
+    private bool _saveLoadWired;
+
+    void WireSaveLoadButtons()
+    {
+        if (_saveLoadWired) return;
+        _saveLoadWired = true;
+        if (saveButton != null)
+            saveButton.onClick.AddListener(SaveTimelineToFile);
+        if (loadButton != null)
+            loadButton.onClick.AddListener(LoadTimelineFromFile);
     }
 
     void WireUpButtons()
@@ -685,5 +703,256 @@ public class ProgrammedMovementsController : MonoBehaviour
         public DCMotorModule moduleDC;
         public int dcDirection = 1; // 1 = forward, -1 = backward
         public GameObject uiRoot;
+    }
+
+    [Serializable]
+    private class SavedMovement
+    {
+        public string ModuleId;
+        public string ModuleType;
+        public float Degree;
+        public int Direction;
+        public int Track;
+    }
+
+    [Serializable]
+    private class SavedSecond
+    {
+        public int Second;
+        public List<SavedMovement> Movements = new List<SavedMovement>();
+    }
+
+    [Serializable]
+    private class SavedTimeline
+    {
+        public List<SavedSecond> Timeline = new List<SavedSecond>();
+    }
+
+    public void SaveTimelineToFile()
+    {
+        var bySecond = new Dictionary<int, List<MovementBlock>>();
+        foreach (var b in _blocks)
+        {
+            if (!bySecond.ContainsKey(b.second))
+                bySecond[b.second] = new List<MovementBlock>();
+            bySecond[b.second].Add(b);
+        }
+
+        var saved = new SavedTimeline();
+        var sortedSeconds = new List<int>(bySecond.Keys);
+        sortedSeconds.Sort();
+        foreach (int sec in sortedSeconds)
+        {
+            var entry = new SavedSecond { Second = sec };
+            foreach (var b in bySecond[sec])
+            {
+                var m = new SavedMovement
+                {
+                    Degree = b.targetAngle,
+                    Direction = b.dcDirection,
+                    Track = b.trackIndex
+                };
+                if (b.moduleServo != null)
+                {
+                    m.ModuleId = b.moduleServo.moduleID;
+                    m.ModuleType = "Servo";
+                }
+                else if (b.moduleDC != null)
+                {
+                    m.ModuleId = b.moduleDC.moduleID;
+                    m.ModuleType = "DC";
+                }
+                entry.Movements.Add(m);
+            }
+            saved.Timeline.Add(entry);
+        }
+
+        string json = JsonUtility.ToJson(saved, true);
+        string dir = Path.Combine(Application.dataPath, "ProgrammedMovements", "SavedTimelines");
+        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+        string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+        string filename = $"timeline_{timestamp}.json";
+        string path = Path.Combine(dir, filename);
+        File.WriteAllText(path, json);
+        Debug.Log($"[ProgrammedMovements] Saved {_blocks.Count} movements to {path}");
+    }
+
+    public void LoadTimelineFromFile()
+    {
+        string dir = Path.Combine(Application.dataPath, "ProgrammedMovements", "SavedTimelines");
+        if (!Directory.Exists(dir))
+        {
+            Debug.LogWarning($"[ProgrammedMovements] No saved timelines directory: {dir}");
+            return;
+        }
+        var files = Directory.GetFiles(dir, "timeline_*.json");
+        if (files.Length == 0)
+        {
+            Debug.LogWarning($"[ProgrammedMovements] No saved timelines found in {dir}");
+            return;
+        }
+        Array.Sort(files);
+        Array.Reverse(files);
+        ShowFilePicker(files);
+    }
+
+    void ShowFilePicker(string[] filePaths)
+    {
+        if (filePickerPanel == null || filePickerContent == null) return;
+
+        ClearFilePickerContent();
+        EnsureScrollRect();
+
+        float itemHeight = 32f;
+        float gap = 4f;
+        float totalHeight = filePaths.Length * (itemHeight + gap);
+        filePickerContent.sizeDelta = new Vector2(0, totalHeight);
+
+        for (int i = 0; i < filePaths.Length; i++)
+        {
+            string filePath = filePaths[i];
+            string fileName = Path.GetFileNameWithoutExtension(filePath);
+
+            var itemGo = new GameObject("Item_" + i);
+            itemGo.transform.SetParent(filePickerContent, false);
+            var itemRect = itemGo.AddComponent<RectTransform>();
+            itemRect.anchorMin = new Vector2(0, 1);
+            itemRect.anchorMax = new Vector2(1, 1);
+            itemRect.pivot = new Vector2(0.5f, 1);
+            itemRect.anchoredPosition = new Vector2(0, -(i * (itemHeight + gap)));
+            itemRect.sizeDelta = new Vector2(-16, itemHeight);
+            var itemImg = itemGo.AddComponent<Image>();
+            itemImg.color = new Color(0.15f, 0.15f, 0.18f, 1f);
+            var itemBtn = itemGo.AddComponent<Button>();
+            itemBtn.targetGraphic = itemImg;
+            var colors = itemBtn.colors;
+            colors.highlightedColor = new Color(0.35f, 0.45f, 0.7f, 1f);
+            colors.pressedColor = new Color(0.2f, 0.3f, 0.6f, 1f);
+            itemBtn.colors = colors;
+            itemBtn.onClick.AddListener(() => OnFileSelected(filePath));
+
+            var labelGo = new GameObject("Label");
+            labelGo.transform.SetParent(itemGo.transform, false);
+            var labelRect = labelGo.AddComponent<RectTransform>();
+            labelRect.anchorMin = Vector2.zero;
+            labelRect.anchorMax = Vector2.one;
+            labelRect.offsetMin = new Vector2(10, 0);
+            labelRect.offsetMax = new Vector2(-10, 0);
+            var labelTxt = labelGo.AddComponent<Text>();
+            labelTxt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            labelTxt.text = fileName;
+            labelTxt.fontSize = 13;
+            labelTxt.alignment = TextAnchor.MiddleLeft;
+            labelTxt.color = Color.white;
+            labelTxt.horizontalOverflow = HorizontalWrapMode.Overflow;
+        }
+
+        filePickerPanel.SetActive(true);
+    }
+
+    void EnsureScrollRect()
+    {
+        var scrollArea = filePickerContent.parent;
+        if (scrollArea == null) return;
+        var scrollGo = scrollArea.gameObject;
+        if (scrollGo.GetComponent<Mask>() == null)
+            scrollGo.AddComponent<Mask>().showMaskGraphic = false;
+        var sr = scrollGo.GetComponent<ScrollRect>();
+        if (sr == null)
+        {
+            sr = scrollGo.AddComponent<ScrollRect>();
+            sr.horizontal = false;
+            sr.vertical = true;
+            sr.content = filePickerContent;
+            sr.movementType = ScrollRect.MovementType.Clamped;
+        }
+    }
+
+    void ClearFilePickerContent()
+    {
+        if (filePickerContent == null) return;
+        for (int i = filePickerContent.childCount - 1; i >= 0; i--)
+            Destroy(filePickerContent.GetChild(i).gameObject);
+    }
+
+    void OnFileSelected(string filePath)
+    {
+        DismissFilePicker();
+        LoadTimelineFromPath(filePath);
+    }
+
+    public void DismissFilePicker()
+    {
+        ClearFilePickerContent();
+        if (filePickerPanel != null)
+            filePickerPanel.SetActive(false);
+    }
+
+    void LoadTimelineFromPath(string path)
+    {
+        string json = File.ReadAllText(path);
+        Debug.Log($"[ProgrammedMovements] Loading from: {path}");
+
+        var saved = JsonUtility.FromJson<SavedTimeline>(json);
+        if (saved == null || saved.Timeline == null || saved.Timeline.Count == 0)
+        {
+            Debug.LogWarning("[ProgrammedMovements] Save file is empty or invalid.");
+            return;
+        }
+
+        foreach (var b in _blocks)
+            if (b.uiRoot != null) Destroy(b.uiRoot);
+        _blocks.Clear();
+        _blocksBySecond.Clear();
+
+        ResolveReferences();
+        EnsureTimelineViewShown();
+
+        var tracksRect = _timelineView?.Find("TracksContainer");
+        if (tracksRect == null)
+        {
+            Debug.LogError("[ProgrammedMovements] TracksContainer not found, cannot load.");
+            return;
+        }
+
+        int loaded = 0;
+        foreach (var entry in saved.Timeline)
+        {
+            foreach (var m in entry.Movements)
+            {
+                int trackIndex = Mathf.Clamp(m.Track, 0, TracksCount - 1);
+
+                var block = new MovementBlock
+                {
+                    trackIndex = trackIndex,
+                    second = Mathf.Clamp(entry.Second, 0, TimelineDurationSeconds - 1),
+                    targetAngle = m.Degree,
+                    dcDirection = m.Direction
+                };
+
+                if (!string.IsNullOrEmpty(m.ModuleId) && TopologyBuilder.idToInstance.TryGetValue(m.ModuleId, out var go))
+                {
+                    if (m.ModuleType == "DC")
+                        block.moduleDC = go.GetComponent<DCMotorModule>();
+                    else
+                        block.moduleServo = go.GetComponent<ServoMotorModule>();
+                }
+                else if (!string.IsNullOrEmpty(m.ModuleId))
+                {
+                    Debug.LogWarning($"[ProgrammedMovements] Module '{m.ModuleId}' not found in topology.");
+                }
+
+                _blocks.Add(block);
+                IndexBlock(block);
+
+                var track = tracksRect.GetChild(trackIndex);
+                var blocksHolder = track.Find("Blocks");
+                if (blocksHolder == null) continue;
+                CreateMovementBlockUI(blocksHolder, block);
+                loaded++;
+            }
+        }
+
+        Debug.Log($"[ProgrammedMovements] Loaded {loaded} movements from {Path.GetFileName(path)}");
     }
 }

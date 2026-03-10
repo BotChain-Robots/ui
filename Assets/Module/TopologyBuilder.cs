@@ -112,6 +112,15 @@ public class TopologyBuilder : MonoBehaviour
                 }
             }
             _skipControlLibraryCalls = false;
+
+            Debug.Log("=== Control Library Topology ===");
+            Debug.Log($"Modules ({graph.Modules.Count}):");
+            foreach (var m in graph.Modules)
+                Debug.Log($"  Id={m.Id}, Type={m.Type}, Degree={m.Degree}");
+            Debug.Log($"Connections ({graph.Connections.Count}):");
+            foreach (var c in graph.Connections)
+                Debug.Log($"  {c.FromModuleId} ({c.FromSocket}) -> {c.ToModuleId} ({c.ToSocket}), Orientation={c.Orientation}");
+            Debug.Log("================================");
         }
 
         BuildTopologyFromGraph(graph);

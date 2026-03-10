@@ -1,0 +1,39 @@
+{
+  "Modules": [
+    { "Id": "hub1", "Type": "Splitter2", "Degree": null },
+    { "Id": "servo1", "Type": "Servo1", "Degree": 90 },
+    { "Id": "servo2", "Type": "Servo1", "Degree": 90 },
+    { "Id": "servo3", "Type": "Servo1", "Degree": 90 },
+    { "Id": "servo4", "Type": "Servo1", "Degree": 90 }
+  ],
+  "Connections": [
+    {
+      "FromModuleId": "hub1",
+      "ToModuleId": "servo1",
+      "FromSocket": "MaleSocket1",
+      "ToSocket": "FemaleSocket",
+      "Orientation": 0
+    },
+    {
+      "FromModuleId": "hub1",
+      "ToModuleId": "servo2",
+      "FromSocket": "MaleSocket2",
+      "ToSocket": "FemaleSocket",
+      "Orientation": 90
+    },
+    {
+      "FromModuleId": "hub1",
+      "ToModuleId": "servo3",
+      "FromSocket": "MaleSocket3",
+      "ToSocket": "FemaleSocket",
+      "Orientation": 180
+    },
+    {
+      "FromModuleId": "hub1",
+      "ToModuleId": "servo4",
+      "FromSocket": "MaleSocket4",
+      "ToSocket": "FemaleSocket",
+      "Orientation": 270
+    }
+  ]
+}
