@@ -87,7 +87,8 @@ public class TopologyBuilder : MonoBehaviour
                 if (n_connection != null)
                 {
                     var connection = n_connection.Value;
-                    Debug.Log("orientation: " + connection.Orientation);
+                    if (connection.FromSocket == 0) { continue; }
+                    Debug.Log("Connection: from (socket): " + connection.FromModuleId + " (" + connection.FromSocket + ")" + " to " + connection.ToModuleId + " ("+ connection.ToSocket + ")" + " orientation: " + connection.Orientation);
                     graph.Connections.Add(new Connection
                     {
                         FromModuleId = connection.FromModuleId,
