@@ -62,7 +62,7 @@ public class TopologyBuilder : MonoBehaviour
         }
         else
         {
-            RobotConfiguration config = ControlLibrary.getRobotConfiguration();
+            RobotConfiguration config = ControlLibrary.getRobotConfiguration(100); // todo: change to actual leader id
             int moduleCount = config.ModulesLength;
             for (int i = 0; i < moduleCount; i++)
             {
@@ -73,7 +73,7 @@ public class TopologyBuilder : MonoBehaviour
                     Debug.Log("Adding module " + module.Id);
                     ModuleType moduleType = Enum.Parse<ModuleType>(module.ModuleType.ToString());
                     float degree = module.ConfigurationAsMotorState().Angle;
-                    if (moduleType == ModuleType.SERVO_1 || moduleType == moduleType.SERVO_2)
+                    if (moduleType == ModuleType.SERVO_1 || moduleType == ModuleType.SERVO_2)
                     {
                         degree = 90;
                     }
@@ -93,7 +93,8 @@ public class TopologyBuilder : MonoBehaviour
                 if (n_connection != null)
                 {
                     var connection = n_connection.Value;
-                    Debug.Log("orientation: " + connection.Orientation);
+                    if (connection.FromSocket == 0) { continue; }
+                    Debug.Log("Connection: from (socket): " + connection.FromModuleId + " (" + connection.FromSocket + ")" + " to " + connection.ToModuleId + " ("+ connection.ToSocket + ")" + " orientation: " + connection.Orientation);
                     graph.Connections.Add(new Connection
                     {
                         FromModuleId = connection.FromModuleId,
