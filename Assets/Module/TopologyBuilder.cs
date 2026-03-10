@@ -73,7 +73,7 @@ public class TopologyBuilder : MonoBehaviour
                     Debug.Log("Adding module " + module.Id);
                     ModuleType moduleType = Enum.Parse<ModuleType>(module.ModuleType.ToString());
                     float degree = module.ConfigurationAsMotorState().Angle;
-                    if (moduleType == ModuleType.SERVO_1 || moduleType == moduleType.SERVO_2)
+                    if (moduleType == ModuleType.SERVO_1 || moduleType == ModuleType.SERVO_2)
                     {
                         degree = 90;
                     }
