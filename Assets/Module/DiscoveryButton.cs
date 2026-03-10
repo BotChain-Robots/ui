@@ -19,16 +19,7 @@ public class DiscoveryButton : MonoBehaviour
 
     public void OnDiscoveryPressed()
     {
-        if (topologyBuilder != null)
-        {
-            Debug.Log("Discovery button pressed.");
-            topologyBuilder.BuildTopologyFromJson();
-            FocusCameraOnTopology();
-        }
-        else
-        {
-            Debug.LogError("TopologyBuilder is not assigned!");
-        }
+        Debug.Log("Discovery button pressed – topology building deferred to overlay selection.");
     }
 
     void FocusCameraOnTopology()

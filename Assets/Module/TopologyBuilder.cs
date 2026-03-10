@@ -23,6 +23,10 @@ public class TopologyBuilder : MonoBehaviour
     [Tooltip("JSON file name (without .json) in Resources folder. e.g. 'mockData' or 'mockDataSimple'")]
     public string jsonFileName = "mockDataNewConfig";
 
+    [Header("Mock Control Library")]
+    [Tooltip("When true, Discover overlay shows mock leaders backed by JSON files instead of calling the real native library.")]
+    public bool mockControlLibrary = false;
+
     public static Dictionary<string, GameObject> idToInstance = new();
     public static bool _skipControlLibraryCalls = true;
 
@@ -123,6 +127,96 @@ public class TopologyBuilder : MonoBehaviour
             Debug.Log("================================");
         }
 
+        BuildTopologyFromGraph(graph);
+    }
+
+    public static readonly Dictionary<int, string> MockLeaders = new()
+    {
+        { 1, "mockData" },
+        { 2, "mockDataWithDC" }
+    };
+
+    public void BuildTopologyFromJsonFile(string fileName)
+    {
+        TopologyGraph graph = new TopologyGraph();
+        Dictionary<int, ModuleType> idToType = new();
+
+        TextAsset jsonAsset = Resources.Load<TextAsset>(fileName);
+        if (jsonAsset == null) { Debug.LogError($"JSON not found: Resources/{fileName}.json"); return; }
+        JsonTopologyGraph jsonGraph = JsonUtility.FromJson<JsonTopologyGraph>(jsonAsset.text);
+        if (jsonGraph?.Modules == null || jsonGraph.Modules.Count == 0) { Debug.LogError("JSON has no modules"); return; }
+
+        Dictionary<string, int> stringToIntId = new();
+        int nextIntId = 1;
+        foreach (var m in jsonGraph.Modules)
+        {
+            if (!stringToIntId.ContainsKey(m.Id)) stringToIntId[m.Id] = nextIntId++;
+            int intId = stringToIntId[m.Id];
+            ModuleType mt = ParseModuleType(m.Type);
+            idToType[intId] = mt;
+            graph.Modules.Add(new ModuleData { Id = intId, Type = mt.ToString(), Degree = m.Degree });
+        }
+        if (jsonGraph.Connections != null)
+            foreach (var c in jsonGraph.Connections)
+            {
+                if (!stringToIntId.TryGetValue(c.FromModuleId, out int fromId) || !stringToIntId.TryGetValue(c.ToModuleId, out int toId)) continue;
+                Orientation o = c.Orientation == 90 ? Orientation.Deg90 : c.Orientation == 180 ? Orientation.Deg180 : c.Orientation == 270 ? Orientation.Deg270 : Orientation.Deg0;
+                graph.Connections.Add(new Connection { FromModuleId = fromId, ToModuleId = toId, FromSocket = c.FromSocket ?? "MaleSocket", ToSocket = c.ToSocket ?? "FemaleSocket", Orientation = o });
+            }
+
+        Debug.Log($"[TopologyBuilder] Built from JSON file: {fileName}");
+        _skipControlLibraryCalls = true;
+        BuildTopologyFromGraph(graph);
+    }
+
+    public void BuildTopologyFromLeader(int leaderId)
+    {
+        TopologyGraph graph = new TopologyGraph();
+        Dictionary<int, ModuleType> idToType = new();
+
+        RobotConfiguration config = ControlLibrary.getRobotConfiguration(leaderId);
+        int moduleCount = config.ModulesLength;
+        for (int i = 0; i < moduleCount; i++)
+        {
+            var n_module = config.Modules(i);
+            if (n_module != null)
+            {
+                var module = n_module.Value;
+                ModuleType moduleType = Enum.Parse<ModuleType>(module.ModuleType.ToString());
+                float degree = module.ConfigurationAsMotorState().Angle;
+                if (moduleType == ModuleType.SERVO_1 || moduleType == ModuleType.SERVO_2)
+                    degree = 90;
+                graph.Modules.Add(new ModuleData { Id = module.Id, Type = module.ModuleType.ToString(), Degree = degree });
+                idToType.Add(module.Id, module.ModuleType);
+            }
+        }
+        int connectionCount = config.ConnectionsLength;
+        for (int i = 0; i < connectionCount; i++)
+        {
+            var n_connection = config.Connections(i);
+            if (n_connection != null)
+            {
+                var connection = n_connection.Value;
+                if (connection.FromSocket == 0) continue;
+                graph.Connections.Add(new Connection
+                {
+                    FromModuleId = connection.FromModuleId,
+                    FromSocket =
+                        idToType[connection.FromModuleId] == ModuleType.SPLITTER ||
+                        idToType[connection.FromModuleId] == ModuleType.SPLITTER_2 ||
+                        idToType[connection.FromModuleId] == ModuleType.SPLITTER_3 ||
+                        idToType[connection.FromModuleId] == ModuleType.SPLITTER_4
+                            ? "MaleSocket" + (connection.FromSocket == 0 ? "" : connection.FromSocket)
+                            : "MaleSocket",
+                    ToModuleId = connection.ToModuleId,
+                    ToSocket = "FemaleSocket",
+                    Orientation = connection.Orientation
+                });
+            }
+        }
+        _skipControlLibraryCalls = false;
+
+        Debug.Log($"[TopologyBuilder] Building from leader {leaderId}: {graph.Modules.Count} modules, {graph.Connections.Count} connections");
         BuildTopologyFromGraph(graph);
     }
 
