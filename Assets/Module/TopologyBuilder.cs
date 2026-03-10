@@ -62,7 +62,7 @@ public class TopologyBuilder : MonoBehaviour
         }
         else
         {
-            RobotConfiguration config = ControlLibrary.getRobotConfiguration();
+            RobotConfiguration config = ControlLibrary.getRobotConfiguration(100); // todo: change to actual leader id
             int moduleCount = config.ModulesLength;
             for (int i = 0; i < moduleCount; i++)
             {
