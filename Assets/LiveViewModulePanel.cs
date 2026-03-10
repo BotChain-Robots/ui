@@ -21,6 +21,7 @@ public class LiveViewModulePanel : MonoBehaviour
     [Range(0f, 0.5f)]
     public float cornerRadius = 0.12f;
 
+    private ModuleBase _lastSelected = null;
     private bool _sliderDragging;
     private ControlPanel panel;
     private GameObject sensorTextContainer;
@@ -64,12 +65,15 @@ public class LiveViewModulePanel : MonoBehaviour
     {
         var selected = ModuleSelector.SelectedModule;
 
+        // Hide sensor text by default unless a sensor branch shows it
+        SetSensorTextActive(false);
+
         if (selected == null)
         {
+            _lastSelected = null;
             SetModuleInfo("No module selected");
             SetServoSectionActive(false);
             SetModuleControlSectionActive(false);
-            SetSensorTextActive(false);
             return;
         }
 
@@ -81,15 +85,16 @@ public class LiveViewModulePanel : MonoBehaviour
         var servo = selected as ServoMotorModule;
         var dc = selected as DCMotorModule;
         var display = selected as DisplayModule;
+        var speaker = selected as SpeakerModule;
         var distance = selected as DistanceSensorModule;
         var imu = selected as IMUSensorModule;
-        var speaker = selected as SpeakerModule;
 
         if (servo != null)
         {
+            _lastSelected = selected;
+
             SetServoSectionActive(true);
             SetModuleControlSectionActive(false);
-            SetSensorTextActive(false);
 
             if (servoAngleSlider != null && !_sliderDragging)
                 servoAngleSlider.SetValueWithoutNotify(servo.currentAngle);
@@ -99,16 +104,20 @@ public class LiveViewModulePanel : MonoBehaviour
 
         if (distance != null)
         {
+            _lastSelected = selected;
+
             SetServoSectionActive(false);
             SetModuleControlSectionActive(false);
 
             SetSensorTextActive(true);
-            SetSensorLines(distance.GetInfoLines()); // implement like IMU or build here
+            SetSensorLines(distance.GetInfoLines());
             return;
         }
 
         if (imu != null)
         {
+            _lastSelected = selected;
+
             SetServoSectionActive(false);
             SetModuleControlSectionActive(false);
 
@@ -117,20 +126,24 @@ public class LiveViewModulePanel : MonoBehaviour
             return;
         }
 
-        // DC or Display both use the same control section
         if (dc != null || display != null || speaker != null)
         {
             SetServoSectionActive(false);
             SetModuleControlSectionActive(true);
 
-            panel?.Initialize(selected);
+            if (selected != _lastSelected)
+            {
+                _lastSelected = selected;
+                panel?.Initialize(selected);
+            }
+
             return;
         }
 
-        // Other types
+        // Other module types
+        _lastSelected = selected;
         SetServoSectionActive(false);
         SetModuleControlSectionActive(false);
-        SetSensorTextActive(false);
     }
 
     void SetModuleControlSectionActive(bool active)
@@ -199,7 +212,6 @@ public class LiveViewModulePanel : MonoBehaviour
 
             var txt = go.AddComponent<Text>();
             txt.font = moduleInfoText.font;
-            txt.fontStyle = FontStyle.Bold;
             txt.fontSize = 22;
             txt.color = Color.white;
             txt.alignment = TextAnchor.UpperLeft;

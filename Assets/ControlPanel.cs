@@ -15,10 +15,6 @@ public class ControlPanel : MonoBehaviour
     private DisplayModule _display;
     private SpeakerModule _speaker;
 
-    private string _savedDCInput = "";
-    private int _savedDirectionIndex = 0;
-    private string _savedDisplayInput = "";
-
     private Text _caption;     // child "DegreesCaption"
     private Text _buttonText;  // child "RotateButton/Text (TMP)"
     private GameObject _directionCaptionGO;
@@ -28,6 +24,20 @@ public class ControlPanel : MonoBehaviour
     private Text _uploadButtonText;
     private Button _playButton;
     private Text _playButtonText;
+
+    private void OnEnable()
+    {
+        if (_mode == Mode.Speaker)
+        {
+            SetUploadVisible(true);
+            SetPlayVisible(true);
+        }
+        else
+        {
+            SetUploadVisible(false);
+            SetPlayVisible(false);
+        }
+    }
 
     private void Awake()
     {
@@ -42,26 +52,10 @@ public class ControlPanel : MonoBehaviour
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(OnMainButtonClicked);
         }
-
-        if (inputField != null)
-        {
-            inputField.onValueChanged.AddListener(_ => CacheCurrentInput());
-            inputField.onEndEdit.AddListener(_ => CacheCurrentInput());
-        }
-
-        if (directionDropdown != null)
-        {
-            directionDropdown.onValueChanged.AddListener(v =>
-            {
-                if (_mode == Mode.DC) _savedDirectionIndex = v;
-            });
-        }
     }
 
     public void Initialize(ModuleBase module)
     {
-        CacheCurrentInput();
-
         _dc = module as DCMotorModule;
         _display = module as DisplayModule;
         _speaker = module as SpeakerModule;
@@ -75,7 +69,6 @@ public class ControlPanel : MonoBehaviour
 
     public void HidePanel()
     {
-        CacheCurrentInput();
         gameObject.SetActive(false);
         _mode = Mode.None;
         _dc = null;
@@ -102,7 +95,6 @@ public class ControlPanel : MonoBehaviour
 
     private void SwitchMode(Mode newMode)
     {
-        CacheCurrentInput();
         _mode = newMode;
 
         if (_mode == Mode.DC)
@@ -118,11 +110,11 @@ public class ControlPanel : MonoBehaviour
             if (inputField != null)
             {
                 inputField.readOnly = false;
-                inputField.SetTextWithoutNotify(_savedDCInput);
+                inputField.SetTextWithoutNotify("");
             }
 
             if (directionDropdown != null)
-                directionDropdown.SetValueWithoutNotify(_savedDirectionIndex);
+                directionDropdown.SetValueWithoutNotify(0);
         }
         else if (_mode == Mode.Display)
         {
@@ -137,10 +129,7 @@ public class ControlPanel : MonoBehaviour
             if (inputField != null)
             {
                 inputField.readOnly = false;
-                string toShow = _savedDisplayInput;
-                if (_display != null && !string.IsNullOrEmpty(_display.displayText))
-                    toShow = _display.displayText;
-                inputField.SetTextWithoutNotify(toShow);
+                inputField.SetTextWithoutNotify("");
             }
         }
         else if (_mode == Mode.Speaker)
@@ -177,21 +166,6 @@ public class ControlPanel : MonoBehaviour
     {
         if (inputField != null && inputField.gameObject.activeSelf != visible)
             inputField.gameObject.SetActive(visible);
-    }
-
-    private void CacheCurrentInput()
-    {
-        if (inputField == null) return;
-
-        if (_mode == Mode.DC)
-        {
-            _savedDCInput = inputField.text;
-            if (directionDropdown != null) _savedDirectionIndex = directionDropdown.value;
-        }
-        else if (_mode == Mode.Display)
-        {
-            _savedDisplayInput = inputField.text;
-        }
     }
 
     private void OnMainButtonClicked()
