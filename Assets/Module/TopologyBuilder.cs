@@ -71,11 +71,17 @@ public class TopologyBuilder : MonoBehaviour
                 {
                     var module = n_module.Value;
                     Debug.Log("Adding module " + module.Id);
+                    ModuleType moduleType = Enum.Parse<ModuleType>(module.ModuleType.ToString());
+                    float degree = module.ConfigurationAsMotorState().Angle;
+                    if (moduleType == ModuleType.SERVO_1 || moduleType == ModuleType.SERVO_2)
+                    {
+                        degree = 90;
+                    }
                     graph.Modules.Add(new ModuleData
                     {
                         Id = module.Id,
                         Type = module.ModuleType.ToString(),
-                        Degree = module.ConfigurationAsMotorState().Angle
+                        Degree = degree
                     });
                     idToType.Add(module.Id, module.ModuleType);
                 }
