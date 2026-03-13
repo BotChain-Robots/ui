@@ -1,0 +1,23 @@
+{
+    "Timeline": [
+        {
+            "Second": 0,
+            "Movements": [
+                {
+                    "ModuleId": "43",
+                    "ModuleType": "DC",
+                    "Degree": 360.0,
+                    "Direction": 1,
+                    "Track": 0
+                },
+                {
+                    "ModuleId": "199",
+                    "ModuleType": "DC",
+                    "Degree": 360.0,
+                    "Direction": -1,
+                    "Track": 1
+                }
+            ]
+        }
+    ]
+}

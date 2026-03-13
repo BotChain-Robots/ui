@@ -1,0 +1,80 @@
+{
+    "Timeline": [
+        {
+            "Second": 0,
+            "Movements": [
+                {
+                    "ModuleId": "82",
+                    "ModuleType": "Servo",
+                    "Degree": 180.0,
+                    "Direction": 1,
+                    "Track": 0
+                },
+                {
+                    "ModuleId": "23",
+                    "ModuleType": "Servo",
+                    "Degree": 0.0,
+                    "Direction": 1,
+                    "Track": 1
+                }
+            ]
+        },
+        {
+            "Second": 1,
+            "Movements": [
+                {
+                    "ModuleId": "81",
+                    "ModuleType": "Servo",
+                    "Degree": 90.0,
+                    "Direction": 1,
+                    "Track": 0
+                },
+                {
+                    "ModuleId": "111",
+                    "ModuleType": "Servo",
+                    "Degree": 90.0,
+                    "Direction": 1,
+                    "Track": 1
+                }
+            ]
+        },
+        {
+            "Second": 2,
+            "Movements": [
+                {
+                    "ModuleId": "82",
+                    "ModuleType": "Servo",
+                    "Degree": 0.0,
+                    "Direction": 1,
+                    "Track": 0
+                },
+                {
+                    "ModuleId": "23",
+                    "ModuleType": "Servo",
+                    "Degree": 180.0,
+                    "Direction": 1,
+                    "Track": 1
+                }
+            ]
+        },
+        {
+            "Second": 3,
+            "Movements": [
+                {
+                    "ModuleId": "81",
+                    "ModuleType": "Servo",
+                    "Degree": 0.0,
+                    "Direction": 1,
+                    "Track": 0
+                },
+                {
+                    "ModuleId": "111",
+                    "ModuleType": "Servo",
+                    "Degree": 0.0,
+                    "Direction": 1,
+                    "Track": 1
+                }
+            ]
+        }
+    ]
+}
