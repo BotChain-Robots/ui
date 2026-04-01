@@ -91,23 +91,48 @@ public class TopologyBuilder : MonoBehaviour
                 }
             }
             int connectionCount = config.ConnectionsLength;
+
+            var rawConns = new List<Frontend.ModuleConnection>();
             for (int i = 0; i < connectionCount; i++)
             {
-                var n_connection = config.Connections(i);
-                if (n_connection != null)
+                var nc = config.Connections(i);
+                if (nc != null) rawConns.Add(nc.Value);
+            }
+
+            var processedPairs = new HashSet<string>();
+
+            // Pass 0: add connections where 'from' is a hub/splitter (named output ports).
+            // Pass 1: add any remaining connections not yet covered.
+            for (int pass = 0; pass < 2; pass++)
+            {
+                foreach (var connection in rawConns)
                 {
-                    var connection = n_connection.Value;
-                    if (connection.FromSocket == 0) { continue; }
-                    Debug.Log("Connection: from (socket): " + connection.FromModuleId + " (" + connection.FromSocket + ")" + " to " + connection.ToModuleId + " ("+ connection.ToSocket + ")" + " orientation: " + connection.Orientation);
-                    graph.Connections.Add(new Connection
+                    if (!idToType.ContainsKey(connection.FromModuleId) || !idToType.ContainsKey(connection.ToModuleId))
                     {
-                        FromModuleId = connection.FromModuleId,
-                        FromSocket =
+                        Debug.LogWarning($"[TopologyBuilder] Skipping connection with unknown module id: {connection.FromModuleId} -> {connection.ToModuleId}");
+                        continue;
+                    }
+
+                    bool fromIsHub =
                         idToType[connection.FromModuleId] == ModuleType.SPLITTER ||
                         idToType[connection.FromModuleId] == ModuleType.SPLITTER_2 ||
                         idToType[connection.FromModuleId] == ModuleType.SPLITTER_3 ||
-                        idToType[connection.FromModuleId] == ModuleType.SPLITTER_4
-                            ? "MaleSocket" + (connection.FromSocket == 0 ? "" : connection.FromSocket)
+                        idToType[connection.FromModuleId] == ModuleType.SPLITTER_4;
+
+                    if (pass == 0 && !fromIsHub) continue;
+
+                    byte lo = Math.Min(connection.FromModuleId, connection.ToModuleId);
+                    byte hi = Math.Max(connection.FromModuleId, connection.ToModuleId);
+                    string pairKey = lo + "-" + hi;
+                    if (processedPairs.Contains(pairKey)) continue;
+                    processedPairs.Add(pairKey);
+
+                    Debug.Log("Connection: from (socket): " + connection.FromModuleId + " (" + connection.FromSocket + ")" + " to " + connection.ToModuleId + " (" + connection.ToSocket + ")" + " orientation: " + connection.Orientation);
+                    graph.Connections.Add(new Connection
+                    {
+                        FromModuleId = connection.FromModuleId,
+                        FromSocket = fromIsHub
+                            ? "MaleSocket" + (connection.FromSocket + 1).ToString()
                             : "MaleSocket",
                         ToModuleId = connection.ToModuleId,
                         ToSocket = "FemaleSocket",
@@ -191,23 +216,47 @@ public class TopologyBuilder : MonoBehaviour
             }
         }
         int connectionCount = config.ConnectionsLength;
+        var rawConns = new List<Frontend.ModuleConnection>();
         for (int i = 0; i < connectionCount; i++)
         {
-            var n_connection = config.Connections(i);
-            if (n_connection != null)
+            var nc = config.Connections(i);
+            if (nc != null) rawConns.Add(nc.Value);
+        }
+
+        var processedPairs = new HashSet<string>();
+
+        // Pass 0: add connections where 'from' is a hub/splitter (named output ports).
+        // Pass 1: add any remaining connections not yet covered.
+        for (int pass = 0; pass < 2; pass++)
+        {
+            foreach (var connection in rawConns)
             {
-                var connection = n_connection.Value;
-                if (connection.FromSocket == 0) continue;
+                if (!idToType.ContainsKey(connection.FromModuleId) || !idToType.ContainsKey(connection.ToModuleId))
+                {
+                    Debug.LogWarning($"[TopologyBuilder] Skipping connection with unknown module id: {connection.FromModuleId} -> {connection.ToModuleId}");
+                    continue;
+                }
+
+                bool fromIsHub =
+                    idToType[connection.FromModuleId] == ModuleType.SPLITTER ||
+                    idToType[connection.FromModuleId] == ModuleType.SPLITTER_2 ||
+                    idToType[connection.FromModuleId] == ModuleType.SPLITTER_3 ||
+                    idToType[connection.FromModuleId] == ModuleType.SPLITTER_4;
+
+                if (pass == 0 && !fromIsHub) continue;
+
+                byte lo = Math.Min(connection.FromModuleId, connection.ToModuleId);
+                byte hi = Math.Max(connection.FromModuleId, connection.ToModuleId);
+                string pairKey = lo + "-" + hi;
+                if (processedPairs.Contains(pairKey)) continue;
+                processedPairs.Add(pairKey);
+
                 graph.Connections.Add(new Connection
                 {
                     FromModuleId = connection.FromModuleId,
-                    FromSocket =
-                        idToType[connection.FromModuleId] == ModuleType.SPLITTER ||
-                        idToType[connection.FromModuleId] == ModuleType.SPLITTER_2 ||
-                        idToType[connection.FromModuleId] == ModuleType.SPLITTER_3 ||
-                        idToType[connection.FromModuleId] == ModuleType.SPLITTER_4
-                            ? "MaleSocket" + (connection.FromSocket == 0 ? "" : connection.FromSocket)
-                            : "MaleSocket",
+                    FromSocket = fromIsHub
+                        ? "MaleSocket" + (connection.FromSocket + 1).ToString()
+                        : "MaleSocket",
                     ToModuleId = connection.ToModuleId,
                     ToSocket = "FemaleSocket",
                     Orientation = connection.Orientation
